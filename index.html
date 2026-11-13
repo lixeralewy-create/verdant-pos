@@ -61,7 +61,7 @@
                     <span class="text-gray-600 font-medium">Customer:</span>
                     <div class="flex gap-1 items-center">
                         <select id="pos-customer-select" class="bg-white border rounded px-2 py-1 text-xs">
-                            <option value="">Walk-in Customer</option>
+                            <option value="1">Walk-in Customer</option>
                         </select>
                         <button onclick="openCustomerModal()" class="bg-emerald-700 text-white px-2 py-1 rounded text-[10px] font-bold">+ New</button>
                     </div>
@@ -133,11 +133,10 @@
                 <table class="w-full text-left border-collapse text-xs">
                     <thead>
                         <tr class="bg-gray-100 border-b border-gray-200 text-gray-600">
-                            <th class="p-2.5">Item</th>
+                            <th class="p-2.5">Item & Added Date</th>
                             <th class="p-2.5">SKU / Barcode</th>
-                            <th class="p-2.5">Cost</th>
-                            <th class="p-2.5">Price</th>
-                            <th class="p-2.5">Stock Adjustment</th>
+                            <th class="p-2.5">Cost / Price</th>
+                            <th class="p-2.5">Stock Controls</th>
                             <th class="p-2.5 text-right">Actions</th>
                         </tr>
                     </thead>
@@ -179,8 +178,16 @@
             </div>
             <div class="bg-white p-4 rounded-lg shadow space-y-3">
                 <h3 class="font-semibold text-xs text-gray-700">Log New Expense</h3>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                    <input type="text" id="exp-title" placeholder="Expense Title (e.g., Rent, Stock)" class="border rounded px-3 py-2 text-xs">
+                <div class="grid grid-cols-1 sm:grid-cols-4 gap-2">
+                    <input type="text" id="exp-title" placeholder="Title (e.g. Electricity)" class="border rounded px-3 py-2 text-xs">
+                    <select id="exp-category" class="border rounded px-2 py-2 text-xs bg-white">
+                        <option value="General">General</option>
+                        <option value="Rent">Rent</option>
+                        <option value="Utilities">Utilities</option>
+                        <option value="Stock Purchase">Stock Purchase</option>
+                        <option value="Wages">Wages</option>
+                        <option value="Transport">Transport</option>
+                    </select>
                     <input type="number" id="exp-amount" placeholder="Amount" step="0.01" class="border rounded px-3 py-2 text-xs">
                     <button onclick="addExpense()" class="bg-emerald-600 text-white rounded px-3 py-2 text-xs font-medium hover:bg-emerald-700">Add Expense</button>
                 </div>
@@ -190,7 +197,7 @@
                     <thead>
                         <tr class="bg-gray-100 border-b text-gray-600">
                             <th class="p-2.5">Date</th>
-                            <th class="p-2.5">Title</th>
+                            <th class="p-2.5">Title & Category</th>
                             <th class="p-2.5 text-right">Amount</th>
                         </tr>
                     </thead>
@@ -226,6 +233,22 @@
                         <p id="audit-net-profit" class="text-base font-bold text-blue-900">0.00</p>
                     </div>
                 </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                    <div class="bg-gray-50 p-3 rounded-lg border">
+                        <h4 class="font-bold text-xs text-emerald-900 mb-2">👑 Top Paying Customers</h4>
+                        <div id="audit-top-payers" class="space-y-1 text-xs">
+                            <p class="text-gray-400">No data yet.</p>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 p-3 rounded-lg border">
+                        <h4 class="font-bold text-xs text-emerald-900 mb-2">🔥 Frequent Buyers</h4>
+                        <div id="audit-frequent-buyers" class="space-y-1 text-xs">
+                            <p class="text-gray-400">No data yet.</p>
+                        </div>
+                    </div>
+                </div>
+
                 <div>
                     <h4 class="font-semibold text-xs text-gray-700 mb-2">Recent Transactions</h4>
                     <div id="audit-transactions-list" class="space-y-2 text-xs">
@@ -284,6 +307,22 @@
                 <canvas id="scanner-canvas" class="hidden"></canvas>
             </div>
             <p class="text-center text-xs text-gray-500">Tap screen to input code manually if needed</p>
+        </div>
+    </div>
+
+    <!-- Quick Stock Add Modal -->
+    <div id="quick-stock-modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-lg p-4 w-full max-w-xs space-y-3">
+            <h3 class="font-bold text-sm text-gray-800" id="qs-modal-title">Add Stock Quantity</h3>
+            <input type="hidden" id="qs-prod-id">
+            <div>
+                <label class="text-[11px] text-gray-600">Quantity to Add (e.g. 1200)</label>
+                <input type="number" id="qs-amount" class="w-full border rounded px-3 py-1.5 text-xs mt-0.5" value="1">
+            </div>
+            <div class="flex gap-2 pt-2">
+                <button onclick="closeQuickStockModal()" class="flex-1 bg-gray-200 py-2 rounded text-xs">Cancel</button>
+                <button onclick="confirmQuickStock()" class="flex-1 bg-emerald-600 text-white py-2 rounded text-xs">Add Stock</button>
+            </div>
         </div>
     </div>
 
@@ -385,11 +424,11 @@
     <script>
         let db = {
             products: [
-                { id: 1, name: "Coca Cola 500ml", sku: "CC500", barcode: "5449000000996", category: "Beverages", cost: 1.00, price: 1.50, stock: 39, lowStock: 5, image: "" },
-                { id: 2, name: "Fresh Bread", sku: "BRD01", barcode: "6001000100016", category: "Bakery", cost: 1.20, price: 2.00, stock: 13, lowStock: 3, image: "" }
+                { id: 1, name: "Coca Cola 500ml", sku: "CC500", barcode: "5449000000996", category: "Beverages", cost: 1.00, price: 1.50, stock: 39, lowStock: 5, dateAdded: "11/13/2026", image: "" },
+                { id: 2, name: "Fresh Bread", sku: "BRD01", barcode: "6001000100016", category: "Bakery", cost: 1.20, price: 2.00, stock: 13, lowStock: 3, dateAdded: "11/13/2026", image: "" }
             ],
             customers: [
-                { id: 1, name: "Walk-in Customer", phone: "-", totalSpent: 0, creditDue: 0 }
+                { id: 1, name: "Walk-in Customer", phone: "-", totalSpent: 0, creditDue: 0, visits: 0 }
             ],
             expenses: [],
             sales: [],
@@ -446,12 +485,13 @@
 
         function renderCustomerDropdown() {
             const select = document.getElementById('pos-customer-select');
-            const currentVal = select.value;
-            select.innerHTML = '';
+            select.innerHTML = '<option value="1">Walk-in Customer</option>';
             db.customers.forEach(c => {
-                select.innerHTML += `<option value="${c.id}">${c.name} ${c.creditDue > 0 ? '(Due: $'+c.creditDue.toFixed(2)+')':''}</option>`;
+                if(c.id !== 1) {
+                    select.innerHTML += `<option value="${c.id}">${c.name} ${c.creditDue > 0 ? '(Due: $'+c.creditDue.toFixed(2)+')':''}</option>`;
+                }
             });
-            if(currentVal) select.value = currentVal;
+            select.value = "1";
         }
 
         function renderProducts() {
@@ -613,6 +653,8 @@
             const customerId = document.getElementById('pos-customer-select').value;
             const customer = db.customers.find(c => c.id == customerId) || db.customers[0];
             
+            customer.visits = (customer.visits || 0) + 1;
+
             if (isTab) {
                 customer.creditDue = (customer.creditDue || 0) + total;
                 if(customer.id === 1) {
@@ -621,7 +663,6 @@
                 }
             } else {
                 customer.totalSpent += total;
-                // If paid with insufficient cash, record the remainder as customer debt (tab)
                 if (tendered < total) {
                     const shortAmount = total - tendered;
                     if (customer.id === 1) {
@@ -645,10 +686,11 @@
             db.sales.unshift(sale);
             saveDB();
             printReceipt(sale);
-            cart = [];
-            document.getElementById('cart-discount').value = 0;
-            document.getElementById('cash-tendered').value = '';
-            renderCart();
+            
+            // Clear checkout session & reset search + customer
+            clearCart();
+            document.getElementById('search-product').value = '';
+            renderCustomerDropdown();
             renderProducts();
             renderCustomers();
             alert(isTab ? 'Sale put on customer credit tab!' : 'Sale completed successfully!');
@@ -695,14 +737,13 @@
                 const isLow = p.stock <= (p.lowStock || 5);
                 tbody.innerHTML += `
                     <tr class="border-b border-gray-100 hover:bg-gray-50 ${isLow ? 'bg-red-50/50' : ''}">
-                        <td class="p-2.5 font-medium text-gray-800">${p.name}<br><span class="text-[10px] text-gray-400">${p.category}</span></td>
+                        <td class="p-2.5 font-medium text-gray-800">${p.name}<br><span class="text-[10px] text-emerald-700">Added: ${p.dateAdded || 'N/A'}</span></td>
                         <td class="p-2.5 text-gray-500">${p.sku || '-'}<br><span class="text-[10px]">${p.barcode || ''}</span></td>
-                        <td class="p-2.5 text-gray-700">${db.settings.currency} ${(p.cost || 0).toFixed(2)}</td>
-                        <td class="p-2.5 text-gray-700">${db.settings.currency} ${p.price.toFixed(2)}</td>
+                        <td class="p-2.5 text-gray-700">${db.settings.currency} ${(p.cost || 0).toFixed(2)} / ${db.settings.currency} ${p.price.toFixed(2)}</td>
                         <td class="p-2.5">
-                            <div class="flex items-center gap-1">
+                            <div class="flex items-center gap-1.5">
                                 <span class="${isLow ? 'text-red-600 font-bold' : 'text-gray-700'}">${p.stock}</span>
-                                <button onclick="quickStockChange(${p.id}, 1)" class="w-5 h-5 bg-emerald-100 text-emerald-800 rounded font-bold text-xs">+</button>
+                                <button onclick="openQuickStockModal(${p.id})" class="bg-emerald-700 text-white px-1.5 py-0.5 rounded text-[10px] font-bold">+ Stock</button>
                                 <button onclick="quickStockChange(${p.id}, -1)" class="w-5 h-5 bg-red-100 text-red-800 rounded font-bold text-xs">-</button>
                             </div>
                         </td>
@@ -713,6 +754,31 @@
                     </tr>
                 `;
             });
+        }
+
+        function openQuickStockModal(id) {
+            const p = db.products.find(prod => prod.id === id);
+            if(!p) return;
+            document.getElementById('qs-prod-id').value = p.id;
+            document.getElementById('qs-modal-title').innerText = `Add Stock to ${p.name}`;
+            document.getElementById('qs-amount').value = "10";
+            document.getElementById('quick-stock-modal').classList.remove('hidden');
+        }
+
+        function closeQuickStockModal() { document.getElementById('quick-stock-modal').classList.add('hidden'); }
+
+        function confirmQuickStock() {
+            const id = document.getElementById('qs-prod-id').value;
+            const amt = parseInt(document.getElementById('qs-amount').value) || 0;
+            const p = db.products.find(prod => prod.id == id);
+            if(p && amt > 0) {
+                p.stock += amt;
+                saveDB();
+                closeQuickStockModal();
+                renderInventory();
+                renderProducts();
+                alert(`Successfully added ${amt} units to ${p.name}!`);
+            }
         }
 
         function quickStockChange(id, amount) {
@@ -772,11 +838,13 @@
 
             if(!name) { alert('Product name required'); return; }
 
+            const todayStr = new Date().toLocaleDateString();
+
             if(id) {
                 const p = db.products.find(prod => prod.id == id);
                 if(p) { p.name = name; p.sku = sku; p.barcode = barcode; p.category = category; p.cost = cost; p.price = price; p.stock = stock; p.lowStock = lowStock; p.image = image; }
             } else {
-                db.products.push({ id: Date.now(), name, sku, barcode, category, cost, price, stock, lowStock, image });
+                db.products.push({ id: Date.now(), name, sku, barcode, category, cost, price, stock, lowStock, dateAdded: todayStr, image });
             }
             saveDB();
             closeProductModal();
@@ -801,6 +869,7 @@
             reader.onload = function(e) {
                 const lines = e.target.result.split('\n');
                 let count = 0;
+                const todayStr = new Date().toLocaleDateString();
                 for(let i = 1; i < lines.length; i++) {
                     const cols = lines[i].split(',');
                     if(cols.length >= 4) {
@@ -812,7 +881,8 @@
                             price: parseFloat(cols[3]) || 0,
                             stock: parseInt(cols[4]) || 10,
                             sku: cols[5] ? cols[5].trim() : '',
-                            barcode: cols[6] ? cols[6].trim() : ''
+                            barcode: cols[6] ? cols[6].trim() : '',
+                            dateAdded: todayStr
                         });
                         count++;
                     }
@@ -858,13 +928,12 @@
             const phone = document.getElementById('cust-phone').value;
             const creditDue = parseFloat(document.getElementById('cust-credit').value) || 0;
             if(!name) { alert('Customer name required'); return; }
-            const newCust = { id: Date.now(), name, phone: phone || '-', totalSpent: 0, creditDue };
+            const newCust = { id: Date.now(), name, phone: phone || '-', totalSpent: 0, creditDue, visits: 0 };
             db.customers.push(newCust);
             saveDB();
             closeCustomerModal();
             renderCustomers();
             renderCustomerDropdown();
-            // Automatically select this new customer in POS dropdown if created from POS
             document.getElementById('pos-customer-select').value = newCust.id;
         }
 
@@ -918,12 +987,13 @@
             }
         }
 
-        // --- EXPENSES ---
+        // --- EXPENSES WITH CATEGORIES ---
         function addExpense() {
             const title = document.getElementById('exp-title').value;
+            const category = document.getElementById('exp-category').value;
             const amount = parseFloat(document.getElementById('exp-amount').value) || 0;
             if(!title || amount <= 0) { alert('Enter valid expense title and amount'); return; }
-            db.expenses.unshift({ id: Date.now(), date: new Date().toLocaleDateString(), title, amount });
+            db.expenses.unshift({ id: Date.now(), date: new Date().toLocaleDateString(), title, category, amount });
             document.getElementById('exp-title').value = '';
             document.getElementById('exp-amount').value = '';
             saveDB();
@@ -941,14 +1011,14 @@
                 tbody.innerHTML += `
                     <tr class="border-b">
                         <td class="p-2.5 text-gray-500">${e.date}</td>
-                        <td class="p-2.5 font-medium text-gray-800">${e.title}</td>
+                        <td class="p-2.5 font-medium text-gray-800">${e.title}<br><span class="text-[10px] text-amber-700 font-semibold">[${e.category || 'General'}]</span></td>
                         <td class="p-2.5 text-right font-bold text-amber-700">${db.settings.currency} ${e.amount.toFixed(2)}</td>
                     </tr>
                 `;
             });
         }
 
-        // --- AUDIT & PDF ---
+        // --- AUDIT & TOP/FREQUENT CUSTOMERS ---
         function renderAudit() {
             const totalRev = db.sales.reduce((sum, s) => sum + s.total, 0);
             const totalExp = db.expenses.reduce((sum, e) => sum + e.amount, 0);
@@ -957,6 +1027,24 @@
             document.getElementById('audit-total-revenue').innerText = `${db.settings.currency} ${totalRev.toFixed(2)}`;
             document.getElementById('audit-total-expenses').innerText = `${db.settings.currency} ${totalExp.toFixed(2)}`;
             document.getElementById('audit-net-profit').innerText = `${db.settings.currency} ${netProfit.toFixed(2)}`;
+
+            // Top Payers
+            const topPayersDiv = document.getElementById('audit-top-payers');
+            const sortedBySpend = [...db.customers].filter(c => c.id !== 1).sort((a,b) => b.totalSpent - a.totalSpent).slice(0, 3);
+            if(sortedBySpend.length === 0 || sortedBySpend.every(c => c.totalSpent === 0)) {
+                topPayersDiv.innerHTML = `<p class="text-gray-400">No customer spending data.</p>`;
+            } else {
+                topPayersDiv.innerHTML = sortedBySpend.map(c => `<div class="flex justify-between"><span>${c.name}</span><span class="font-bold text-emerald-700">$${c.totalSpent.toFixed(2)}</span></div>`).join('');
+            }
+
+            // Frequent Buyers
+            const frequentDiv = document.getElementById('audit-frequent-buyers');
+            const sortedByVisits = [...db.customers].filter(c => c.id !== 1).sort((a,b) => (b.visits||0) - (a.visits||0)).slice(0, 3);
+            if(sortedByVisits.length === 0 || sortedByVisits.every(c => (c.visits||0) === 0)) {
+                frequentDiv.innerHTML = `<p class="text-gray-400">No visit data yet.</p>`;
+            } else {
+                frequentDiv.innerHTML = sortedByVisits.map(c => `<div class="flex justify-between"><span>${c.name}</span><span class="font-bold text-blue-700">${c.visits || 0} visits</span></div>`).join('');
+            }
 
             const list = document.getElementById('audit-transactions-list');
             if(db.sales.length === 0) {
@@ -1017,64 +1105,4 @@
                     acceptAllDevices: true,
                     optionalServices: ['000018f0-0000-1000-8000-00805f9b34fb', '49535343-fe7d-4ae5-8fa9-9fafd205e455', 'e7810a71-73ae-499d-8c15-faa9aef0c3f2']
                 });
-                const server = await bluetoothDevice.gatt.connect();
-                const services = await server.getPrimaryServices();
-                for(let service of services) {
-                    const characteristics = await service.getCharacteristics();
-                    for(let char of characteristics) {
-                        if(char.properties.write || char.properties.writeWithoutResponse) {
-                            bluetoothCharacteristic = char;
-                            document.getElementById('printer-status').innerText = `Status: Connected to ${bluetoothDevice.name || 'Printer'}`;
-                            document.getElementById('printer-status').className = 'text-xs text-emerald-600 font-semibold text-center';
-                            return;
-                        }
-                    }
-                }
-                alert('Connected to device, but no printable service found.');
-            } catch(error) {
-                console.log(error);
-                alert('Printer connection failed or cancelled.');
-            }
-        }
-
-        async function printReceipt(sale) {
-            if(!bluetoothCharacteristic) return;
-            try {
-                let encoder = new TextEncoder();
-                let commands = '\x1B\x40';
-                commands += '\x1B\x61\x01';
-                commands += 'EARTH CIRCLE\n';
-                commands += '-----------------';
-                commands += `\nReceipt: #${sale.id.toString().slice(-6)}`;
-                commands += `\nCustomer: ${sale.customer}`;
-                commands += `\nDate: ${sale.date}\n\n`;
-                commands += '\x1B\x61\x00';
                 
-                sale.items.forEach(i => {
-                    commands += `${i.name.substring(0, 20)}\n`;
-                    commands += `  ${i.qty} x ${i.price.toFixed(2)} = ${(i.qty * i.price).toFixed(2)}\n`;
-                });
-                
-                commands += '-----------------\n';
-                commands += `Subtotal: ${sale.subtotal.toFixed(2)}\n`;
-                if(sale.discount > 0) commands += `Discount: -${sale.discount.toFixed(2)}\n`;
-                commands += `Tax: ${sale.tax.toFixed(2)}\n`;
-                commands += `TOTAL: ${sale.currency} ${sale.total.toFixed(2)}\n`;
-                commands += `Tendered: ${sale.currency} ${(sale.tendered || sale.total).toFixed(2)}\n`;
-                if(sale.tendered > sale.total) {
-                    commands += `Change: ${sale.currency} ${(sale.tendered - sale.total).toFixed(2)}\n`;
-                }
-                commands += '-----------------\n';
-                commands += '\x1B\x61\x01';
-                commands += 'Thank you for shopping\nat Earth Circle!\n\n\n';
-
-                await bluetoothCharacteristic.writeValue(encoder.encode(commands));
-            } catch(err) {
-                console.error('Print error:', err);
-            }
-        }
-
-        window.onload = init;
-    </script>
-</body>
-</html>
