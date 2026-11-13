@@ -59,9 +59,12 @@
                 
                 <div class="px-3 py-1.5 bg-gray-50 border-b border-gray-200 flex justify-between items-center text-xs">
                     <span class="text-gray-600 font-medium">Customer:</span>
-                    <select id="pos-customer-select" class="bg-white border rounded px-2 py-1 text-xs">
-                        <option value="">Walk-in Customer</option>
-                    </select>
+                    <div class="flex gap-1 items-center">
+                        <select id="pos-customer-select" class="bg-white border rounded px-2 py-1 text-xs">
+                            <option value="">Walk-in Customer</option>
+                        </select>
+                        <button onclick="openCustomerModal()" class="bg-emerald-700 text-white px-2 py-1 rounded text-[10px] font-bold">+ New</button>
+                    </div>
                 </div>
 
                 <div id="cart-items" class="flex-1 overflow-y-auto divide-y divide-gray-100 p-3">
@@ -91,12 +94,24 @@
                         <span>Total (<span id="currency-label">USD</span>):</span>
                         <span id="cart-total" class="text-emerald-700">0.00</span>
                     </div>
-                    <div class="grid grid-cols-2 gap-2">
-                        <button onclick="checkout(false)" class="bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 rounded-lg shadow transition text-xs">
-                            Cash / Paid
+                    
+                    <div class="space-y-1">
+                        <div class="flex justify-between items-center text-xs">
+                            <span class="text-gray-600 font-medium">Cash Tendered:</span>
+                            <input type="number" id="cash-tendered" placeholder="0.00" oninput="calculateChange()" class="w-24 border rounded px-2 py-1 text-right text-xs" step="0.01">
+                        </div>
+                        <div class="flex justify-between text-xs font-semibold">
+                            <span class="text-gray-500" id="change-due-label">Change Due:</span>
+                            <span id="change-due-amount" class="text-emerald-700">0.00</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2 pt-1">
+                        <button onclick="checkout(false)" class="bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2 rounded-lg shadow transition text-xs">
+                            Complete Sale
                         </button>
-                        <button onclick="checkout(true)" class="bg-amber-600 hover:bg-amber-700 text-white font-medium py-2.5 rounded-lg shadow transition text-xs">
-                            Put on Tab (Credit)
+                        <button onclick="checkout(true)" class="bg-amber-600 hover:bg-amber-700 text-white font-medium py-2 rounded-lg shadow transition text-xs">
+                            Put on Tab
                         </button>
                     </div>
                 </div>
@@ -122,7 +137,7 @@
                             <th class="p-2.5">SKU / Barcode</th>
                             <th class="p-2.5">Cost</th>
                             <th class="p-2.5">Price</th>
-                            <th class="p-2.5">Stock</th>
+                            <th class="p-2.5">Stock Adjustment</th>
                             <th class="p-2.5 text-right">Actions</th>
                         </tr>
                     </thead>
@@ -144,7 +159,7 @@
                     <thead>
                         <tr class="bg-gray-100 border-b border-gray-200 text-gray-600">
                             <th class="p-2.5">Name</th>
-                            <th class="p-2.5">Phone</th>
+                            <th class="p-2.5">Phone Number</th>
                             <th class="p-2.5">Total Spent</th>
                             <th class="p-2.5">Tab / Credit Due</th>
                             <th class="p-2.5 text-right">Actions</th>
@@ -257,7 +272,7 @@
         </div>
     </main>
 
-    <!-- Scanner Modal (Native HTML5 Video) -->
+    <!-- Scanner Modal -->
     <div id="scanner-modal" class="fixed inset-0 bg-black/90 hidden flex flex-col items-center justify-center p-4 z-50">
         <div class="w-full max-w-sm bg-white rounded-lg p-3 space-y-3">
             <div class="flex justify-between items-center">
@@ -268,7 +283,7 @@
                 <video id="scanner-video" class="w-full h-full object-cover" autoplay playsinline></video>
                 <canvas id="scanner-canvas" class="hidden"></canvas>
             </div>
-            <p class="text-center text-xs text-gray-500">Align barcode within frame</p>
+            <p class="text-center text-xs text-gray-500">Tap screen to input code manually if needed</p>
         </div>
     </div>
 
@@ -337,7 +352,7 @@
             </div>
             <div>
                 <label class="text-[11px] text-gray-600">Phone Number</label>
-                <input type="text" id="cust-phone" class="w-full border rounded px-3 py-1.5 text-xs mt-0.5">
+                <input type="text" id="cust-phone" class="w-full border rounded px-3 py-1.5 text-xs mt-0.5" placeholder="e.g. 077...">
             </div>
             <div>
                 <label class="text-[11px] text-gray-600">Initial Credit/Tab Due ($)</label>
@@ -385,7 +400,6 @@
         let bluetoothDevice = null;
         let bluetoothCharacteristic = null;
         let mediaStream = null;
-        let scanInterval = null;
 
         function init() {
             const saved = localStorage.getItem('earth_circle_pos_pro');
@@ -432,10 +446,12 @@
 
         function renderCustomerDropdown() {
             const select = document.getElementById('pos-customer-select');
+            const currentVal = select.value;
             select.innerHTML = '';
             db.customers.forEach(c => {
                 select.innerHTML += `<option value="${c.id}">${c.name} ${c.creditDue > 0 ? '(Due: $'+c.creditDue.toFixed(2)+')':''}</option>`;
             });
+            if(currentVal) select.value = currentVal;
         }
 
         function renderProducts() {
@@ -502,6 +518,8 @@
                 document.getElementById('cart-subtotal').innerText = '0.00';
                 document.getElementById('cart-tax').innerText = '0.00';
                 document.getElementById('cart-total').innerText = '0.00';
+                document.getElementById('cash-tendered').value = '';
+                document.getElementById('change-due-amount').innerText = '0.00';
                 return;
             }
 
@@ -535,6 +553,31 @@
             document.getElementById('cart-subtotal').innerText = subtotal.toFixed(2);
             document.getElementById('cart-tax').innerText = tax.toFixed(2);
             document.getElementById('cart-total').innerText = total.toFixed(2);
+            calculateChange();
+        }
+
+        function calculateChange() {
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            const discountVal = parseFloat(document.getElementById('cart-discount').value) || 0;
+            const discountType = document.getElementById('cart-discount-type').value;
+            let discount = discountType === 'percent' ? subtotal * (discountVal / 100) : discountVal;
+            const taxable = subtotal - discount;
+            const tax = taxable * (db.settings.tax / 100);
+            const total = taxable + tax;
+
+            const tendered = parseFloat(document.getElementById('cash-tendered').value) || 0;
+            const changeLabel = document.getElementById('change-due-label');
+            const changeAmt = document.getElementById('change-due-amount');
+
+            if (tendered >= total) {
+                changeLabel.innerText = "Change Due:";
+                changeAmt.innerText = (tendered - total).toFixed(2);
+                changeAmt.className = "text-emerald-700 font-bold";
+            } else {
+                changeLabel.innerText = "Insufficient (Short):";
+                changeAmt.innerText = (total - tendered).toFixed(2);
+                changeAmt.className = "text-red-600 font-bold";
+            }
         }
 
         function adjustQty(index, change) {
@@ -546,6 +589,7 @@
         function clearCart() {
             cart = [];
             document.getElementById('cart-discount').value = 0;
+            document.getElementById('cash-tendered').value = '';
             renderCart();
         }
 
@@ -559,6 +603,8 @@
             const tax = taxable * (db.settings.tax / 100);
             const total = taxable + tax;
 
+            const tendered = parseFloat(document.getElementById('cash-tendered').value) || total;
+
             cart.forEach(item => {
                 const p = db.products.find(prod => prod.id === item.id);
                 if(p) p.stock -= item.qty;
@@ -570,18 +616,27 @@
             if (isTab) {
                 customer.creditDue = (customer.creditDue || 0) + total;
                 if(customer.id === 1) {
-                    alert('Walk-in customers cannot take store credit. Please select a registered client.');
+                    alert('Walk-in customers cannot take store credit. Please select or add a registered client.');
                     return;
                 }
             } else {
                 customer.totalSpent += total;
+                // If paid with insufficient cash, record the remainder as customer debt (tab)
+                if (tendered < total) {
+                    const shortAmount = total - tendered;
+                    if (customer.id === 1) {
+                        alert('Walk-in customer cannot have a shortfall balance. Please select a registered client.');
+                        return;
+                    }
+                    customer.creditDue = (customer.creditDue || 0) + shortAmount;
+                }
             }
 
             const sale = {
                 id: Date.now(),
                 date: new Date().toLocaleString(),
                 items: [...cart],
-                subtotal, discount, tax, total,
+                subtotal, discount, tax, total, tendered,
                 customer: customer.name,
                 isTab,
                 currency: db.settings.currency
@@ -592,6 +647,7 @@
             printReceipt(sale);
             cart = [];
             document.getElementById('cart-discount').value = 0;
+            document.getElementById('cash-tendered').value = '';
             renderCart();
             renderProducts();
             renderCustomers();
@@ -606,12 +662,6 @@
                 const videoElement = document.getElementById('scanner-video');
                 videoElement.srcObject = mediaStream;
                 videoElement.play();
-                
-                // Allow manual text prompt simulation if barcode API isn't built-in
-                if (!('BarcodeDetector' in window)) {
-                    // Fallback prompt scan simulation for mobile browsers
-                    console.log('BarcodeDetector API not natively supported in this browser wrapper, using fallback listener.');
-                }
             } catch (err) {
                 alert('Camera access denied or unavailable.');
                 stopBarcodeScanner();
@@ -624,10 +674,8 @@
                 mediaStream.getTracks().forEach(track => track.stop());
                 mediaStream = null;
             }
-            if (scanInterval) clearInterval(scanInterval);
         }
 
-        // Tap video feed to simulate scan input if needed or trigger search
         document.addEventListener('click', function(e) {
             if(e.target && e.target.id === 'scanner-video') {
                 const code = prompt("Enter or scan barcode text manually:");
@@ -639,7 +687,7 @@
             }
         });
 
-        // --- INVENTORY MANAGEMENT ---
+        // --- INVENTORY MANAGEMENT & QUICK STOCK ---
         function renderInventory() {
             const tbody = document.getElementById('inventory-table-body');
             tbody.innerHTML = '';
@@ -651,7 +699,13 @@
                         <td class="p-2.5 text-gray-500">${p.sku || '-'}<br><span class="text-[10px]">${p.barcode || ''}</span></td>
                         <td class="p-2.5 text-gray-700">${db.settings.currency} ${(p.cost || 0).toFixed(2)}</td>
                         <td class="p-2.5 text-gray-700">${db.settings.currency} ${p.price.toFixed(2)}</td>
-                        <td class="p-2.5 ${isLow ? 'text-red-600 font-bold' : 'text-gray-700'}">${p.stock} ${isLow ? '⚠️' : ''}</td>
+                        <td class="p-2.5">
+                            <div class="flex items-center gap-1">
+                                <span class="${isLow ? 'text-red-600 font-bold' : 'text-gray-700'}">${p.stock}</span>
+                                <button onclick="quickStockChange(${p.id}, 1)" class="w-5 h-5 bg-emerald-100 text-emerald-800 rounded font-bold text-xs">+</button>
+                                <button onclick="quickStockChange(${p.id}, -1)" class="w-5 h-5 bg-red-100 text-red-800 rounded font-bold text-xs">-</button>
+                            </div>
+                        </td>
                         <td class="p-2.5 text-right space-x-1">
                             <button onclick="editProduct(${p.id})" class="text-blue-600 hover:underline">Edit</button>
                             <button onclick="deleteProduct(${p.id})" class="text-red-600 hover:underline">Del</button>
@@ -659,6 +713,17 @@
                     </tr>
                 `;
             });
+        }
+
+        function quickStockChange(id, amount) {
+            const p = db.products.find(prod => prod.id === id);
+            if(p) {
+                p.stock += amount;
+                if(p.stock < 0) p.stock = 0;
+                saveDB();
+                renderInventory();
+                renderProducts();
+            }
         }
 
         function openProductModal(id = null) {
@@ -768,7 +833,7 @@
                 tbody.innerHTML += `
                     <tr class="border-b border-gray-100">
                         <td class="p-2.5 font-medium text-gray-800">${c.name}</td>
-                        <td class="p-2.5 text-gray-500">${c.phone}</td>
+                        <td class="p-2.5 text-gray-500">${c.phone || '-'}</td>
                         <td class="p-2.5 text-gray-700">${db.settings.currency} ${c.totalSpent.toFixed(2)}</td>
                         <td class="p-2.5 text-red-600 font-semibold">${db.settings.currency} ${(c.creditDue || 0).toFixed(2)}</td>
                         <td class="p-2.5 text-right space-x-1">
@@ -780,7 +845,12 @@
             });
         }
 
-        function openCustomerModal() { document.getElementById('customer-modal').classList.remove('hidden'); }
+        function openCustomerModal() {
+            document.getElementById('cust-name').value = '';
+            document.getElementById('cust-phone').value = '';
+            document.getElementById('cust-credit').value = '0';
+            document.getElementById('customer-modal').classList.remove('hidden');
+        }
         function closeCustomerModal() { document.getElementById('customer-modal').classList.add('hidden'); }
         
         function saveCustomer() {
@@ -788,11 +858,14 @@
             const phone = document.getElementById('cust-phone').value;
             const creditDue = parseFloat(document.getElementById('cust-credit').value) || 0;
             if(!name) { alert('Customer name required'); return; }
-            db.customers.push({ id: Date.now(), name, phone: phone || '-', totalSpent: 0, creditDue });
+            const newCust = { id: Date.now(), name, phone: phone || '-', totalSpent: 0, creditDue };
+            db.customers.push(newCust);
             saveDB();
             closeCustomerModal();
             renderCustomers();
             renderCustomerDropdown();
+            // Automatically select this new customer in POS dropdown if created from POS
+            document.getElementById('pos-customer-select').value = newCust.id;
         }
 
         function openPaymentModal(custId) {
@@ -820,12 +893,11 @@
             c.creditDue -= amount;
             c.totalSpent += amount;
 
-            // Log as sale payment
             db.sales.unshift({
                 id: Date.now(),
                 date: new Date().toLocaleString(),
                 items: [{ name: 'Debt Repayment', price: amount, qty: 1 }],
-                subtotal: amount, discount: 0, tax: 0, total: amount,
+                subtotal: amount, discount: 0, tax: 0, total: amount, tendered: amount,
                 customer: c.name,
                 currency: db.settings.currency
             });
@@ -988,6 +1060,10 @@
                 if(sale.discount > 0) commands += `Discount: -${sale.discount.toFixed(2)}\n`;
                 commands += `Tax: ${sale.tax.toFixed(2)}\n`;
                 commands += `TOTAL: ${sale.currency} ${sale.total.toFixed(2)}\n`;
+                commands += `Tendered: ${sale.currency} ${(sale.tendered || sale.total).toFixed(2)}\n`;
+                if(sale.tendered > sale.total) {
+                    commands += `Change: ${sale.currency} ${(sale.tendered - sale.total).toFixed(2)}\n`;
+                }
                 commands += '-----------------\n';
                 commands += '\x1B\x61\x01';
                 commands += 'Thank you for shopping\nat Earth Circle!\n\n\n';
