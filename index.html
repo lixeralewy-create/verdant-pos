@@ -22,12 +22,12 @@
             <p class="text-[10px] text-emerald-300">58mm Thermal • Offline Pro</p>
         </div>
         <div class="flex items-center gap-1 overflow-x-auto">
-            <button onclick="switchTab('pos')" class="px-2.5 py-1 bg-emerald-700 hover:bg-emerald-600 rounded text-xs font-medium cursor-pointer">POS</button>
-            <button onclick="switchTab('inventory')" class="px-2.5 py-1 bg-emerald-700 hover:bg-emerald-600 rounded text-xs font-medium cursor-pointer">Stock</button>
-            <button onclick="switchTab('customers')" class="px-2.5 py-1 bg-emerald-700 hover:bg-emerald-600 rounded text-xs font-medium cursor-pointer">Clients</button>
-            <button onclick="switchTab('expenses')" class="px-2.5 py-1 bg-emerald-700 hover:bg-emerald-600 rounded text-xs font-medium cursor-pointer">Expenses</button>
-            <button onclick="switchTab('audit')" class="px-2.5 py-1 bg-emerald-700 hover:bg-emerald-600 rounded text-xs font-medium cursor-pointer">Audit</button>
-            <button onclick="switchTab('settings')" class="px-2 py-1 bg-emerald-700 hover:bg-emerald-600 rounded text-xs font-medium cursor-pointer">⚙️</button>
+            <button onclick="switchTab('pos')" class="px-2.5 py-1 bg-emerald-700 hover:bg-emerald-600 rounded text-xs font-medium">POS</button>
+            <button onclick="switchTab('inventory')" class="px-2.5 py-1 bg-emerald-700 hover:bg-emerald-600 rounded text-xs font-medium">Stock</button>
+            <button onclick="switchTab('customers')" class="px-2.5 py-1 bg-emerald-700 hover:bg-emerald-600 rounded text-xs font-medium">Clients</button>
+            <button onclick="switchTab('expenses')" class="px-2.5 py-1 bg-emerald-700 hover:bg-emerald-600 rounded text-xs font-medium">Expenses</button>
+            <button onclick="switchTab('audit')" class="px-2.5 py-1 bg-emerald-700 hover:bg-emerald-600 rounded text-xs font-medium">Audit</button>
+            <button onclick="switchTab('settings')" class="px-2 py-1 bg-emerald-700 hover:bg-emerald-600 rounded text-xs font-medium">⚙️</button>
         </div>
     </header>
 
@@ -40,7 +40,7 @@
             <div class="flex-1 flex flex-col p-3 overflow-hidden">
                 <div class="flex gap-2 mb-3 shrink-0">
                     <input type="text" id="search-product" placeholder="Search product, barcode, SKU..." oninput="filterProducts()" class="flex-1 bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600">
-                    <button onclick="startBarcodeScanner()" class="bg-emerald-800 text-white px-3 py-2 rounded-lg text-xs font-semibold shadow hover:bg-emerald-900 flex items-center gap-1 cursor-pointer">📷 Scan</button>
+                    <button onclick="startBarcodeScanner()" class="bg-emerald-800 text-white px-3 py-2 rounded-lg text-xs font-semibold shadow hover:bg-emerald-900 flex items-center gap-1">📷 Scan</button>
                     <select id="filter-cat" onchange="filterProducts()" class="bg-white border border-gray-300 rounded-lg px-2 py-2 text-xs">
                         <option value="">All Categories</option>
                     </select>
@@ -54,7 +54,7 @@
             <div class="w-full md:w-96 bg-white border-t md:border-t-0 md:border-l border-gray-200 flex flex-col h-1/2 md:h-full shrink-0">
                 <div class="p-3 bg-emerald-50 border-b border-emerald-100 flex justify-between items-center shrink-0">
                     <span class="font-semibold text-emerald-900 text-sm">Current Order</span>
-                    <button onclick="clearCart()" class="text-xs text-red-600 hover:underline cursor-pointer">Clear Cart</button>
+                    <button onclick="clearCart()" class="text-xs text-red-600 hover:underline">Clear Cart</button>
                 </div>
                 
                 <div class="px-3 py-1.5 bg-gray-50 border-b border-gray-200 flex justify-between items-center text-xs">
@@ -63,8 +63,8 @@
                         <select id="pos-customer-select" class="bg-white border rounded px-2 py-1 text-xs">
                             <option value="1">Walk-in Customer</option>
                         </select>
-                        <button type="button" onclick="openCustomerSearchModal()" class="bg-gray-700 text-white px-2 py-1 rounded text-[10px] cursor-pointer" title="Search Customer">🔍</button>
-                        <button type="button" onclick="openCustomerModal()" class="bg-emerald-700 text-white px-2 py-1 rounded text-[10px] font-bold cursor-pointer">+ New</button>
+                        <button onclick="openCustomerSearchModal()" class="bg-gray-700 text-white px-2 py-1 rounded text-[10px]" title="Search Customer">🔍</button>
+                        <button onclick="openCustomerModal()" class="bg-emerald-700 text-white px-2 py-1 rounded text-[10px] font-bold">+ New</button>
                     </div>
                 </div>
 
@@ -108,10 +108,10 @@
                     </div>
 
                     <div class="grid grid-cols-2 gap-2 pt-1">
-                        <button onclick="checkout(false)" class="bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2 rounded-lg shadow transition text-xs cursor-pointer">
+                        <button onclick="checkout(false)" class="bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2 rounded-lg shadow transition text-xs">
                             Complete Sale
                         </button>
-                        <button onclick="checkout(true)" class="bg-amber-600 hover:bg-amber-700 text-white font-medium py-2 rounded-lg shadow transition text-xs cursor-pointer">
+                        <button onclick="checkout(true)" class="bg-amber-600 hover:bg-amber-700 text-white font-medium py-2 rounded-lg shadow transition text-xs">
                             Put on Tab
                         </button>
                     </div>
@@ -127,7 +127,7 @@
                     <label class="bg-emerald-600 text-white px-3 py-1.5 rounded text-xs font-medium cursor-pointer shadow hover:bg-emerald-700">
                         Import CSV <input type="file" accept=".csv" onchange="importCSV(event)" class="hidden">
                     </label>
-                    <button onclick="openProductModal()" class="bg-emerald-800 text-white px-3 py-1.5 rounded text-xs font-medium shadow hover:bg-emerald-900 cursor-pointer">+ Add Item</button>
+                    <button onclick="openProductModal()" class="bg-emerald-800 text-white px-3 py-1.5 rounded text-xs font-medium shadow hover:bg-emerald-900">+ Add Item</button>
                 </div>
             </div>
             <div class="bg-white rounded-lg shadow overflow-x-auto">
@@ -152,7 +152,7 @@
         <div id="tab-customers" class="tab-content h-full p-4 overflow-y-auto space-y-4">
             <div class="flex justify-between items-center">
                 <h2 class="text-lg font-bold text-gray-800">Customer Management</h2>
-                <button onclick="openCustomerModal()" class="bg-emerald-800 text-white px-3 py-1.5 rounded text-xs font-medium shadow hover:bg-emerald-900 cursor-pointer">+ Add Customer</button>
+                <button onclick="openCustomerModal()" class="bg-emerald-800 text-white px-3 py-1.5 rounded text-xs font-medium shadow hover:bg-emerald-900">+ Add Customer</button>
             </div>
             <div class="bg-white rounded-lg shadow overflow-x-auto">
                 <table class="w-full text-left border-collapse text-xs">
@@ -190,7 +190,7 @@
                         <option value="Transport">Transport</option>
                     </select>
                     <input type="number" id="exp-amount" placeholder="Amount" step="0.01" class="border rounded px-3 py-2 text-xs">
-                    <button onclick="addExpense()" class="bg-emerald-600 text-white rounded px-3 py-2 text-xs font-medium hover:bg-emerald-700 cursor-pointer">Add Expense</button>
+                    <button onclick="addExpense()" class="bg-emerald-600 text-white rounded px-3 py-2 text-xs font-medium hover:bg-emerald-700">Add Expense</button>
                 </div>
             </div>
             <div class="bg-white rounded-lg shadow overflow-hidden">
@@ -199,4 +199,1104 @@
                         <tr class="bg-gray-100 border-b text-gray-600">
                             <th class="p-2.5">Date</th>
                             <th class="p-2.5">Title & Category</th>
-                            
+                            <th class="p-2.5 text-right">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody id="expense-table-body" class="divide-y">
+                        <!-- Dynamically populated -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- TAB 5: AUDIT -->
+        <div id="tab-audit" class="tab-content h-full p-4 overflow-y-auto space-y-4">
+            <div class="flex justify-between items-center">
+                <h2 class="text-lg font-bold text-gray-800">Sales & Profit Audit</h2>
+                <button onclick="exportPDF()" class="bg-emerald-600 text-white px-3 py-1.5 rounded text-xs font-medium shadow hover:bg-emerald-700">Download PDF Audit</button>
+            </div>
+            <div id="audit-printable-area" class="bg-white p-4 rounded-lg shadow space-y-4">
+                <div class="border-b pb-3">
+                    <h3 class="font-bold text-base text-emerald-900">Earth Circle - Financial Audit</h3>
+                    <p class="text-xs text-gray-500" id="audit-date-range">Generated Today</p>
+                </div>
+                <div class="grid grid-cols-3 gap-2">
+                    <div class="bg-emerald-50 p-3 rounded-lg border border-emerald-100">
+                        <p class="text-[10px] text-emerald-700 font-medium">Revenue</p>
+                        <p id="audit-total-revenue" class="text-base font-bold text-emerald-900">0.00</p>
+                    </div>
+                    <div class="bg-amber-50 p-3 rounded-lg border border-amber-100">
+                        <p class="text-[10px] text-amber-700 font-medium">Expenses</p>
+                        <p id="audit-total-expenses" class="text-base font-bold text-amber-900">0.00</p>
+                    </div>
+                    <div class="bg-blue-50 p-3 rounded-lg border border-blue-100">
+                        <p class="text-[10px] text-blue-700 font-medium">Net Profit</p>
+                        <p id="audit-net-profit" class="text-base font-bold text-blue-900">0.00</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                    <div class="bg-gray-50 p-3 rounded-lg border">
+                        <h4 class="font-bold text-xs text-emerald-900 mb-2">👑 Top Paying Customers</h4>
+                        <div id="audit-top-payers" class="space-y-1 text-xs">
+                            <p class="text-gray-400">No data yet.</p>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 p-3 rounded-lg border">
+                        <h4 class="font-bold text-xs text-emerald-900 mb-2">🔥 Frequent Buyers</h4>
+                        <div id="audit-frequent-buyers" class="space-y-1 text-xs">
+                            <p class="text-gray-400">No data yet.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold text-xs text-gray-700 mb-2">Recent Transactions (Tap to Void)</h4>
+                    <div id="audit-transactions-list" class="space-y-2 text-xs">
+                        <p class="text-gray-400">No sales recorded yet.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 6: SETTINGS -->
+        <div id="tab-settings" class="tab-content h-full p-4 overflow-y-auto max-w-lg mx-auto space-y-4">
+            <h2 class="text-lg font-bold text-gray-800">POS Settings & Cloud Backup</h2>
+            <div class="bg-white p-4 rounded-lg shadow space-y-3">
+                <div>
+                    <label class="block text-xs font-medium text-gray-600">Currency</label>
+                    <select id="set-currency" class="w-full mt-1 bg-white border border-gray-300 rounded px-3 py-2 text-xs">
+                        <option value="USD">USD ($)</option>
+                        <option value="ZiG">ZiG (ZiG)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-600">Tax / VAT Rate (%)</label>
+                    <input type="number" id="set-tax" value="15" class="w-full mt-1 bg-white border border-gray-300 rounded px-3 py-2 text-xs">
+                </div>
+                <button onclick="saveSettings()" class="w-full bg-emerald-600 text-white py-2 rounded text-xs font-medium hover:bg-emerald-700">Save Settings</button>
+            </div>
+
+            <div class="bg-white p-4 rounded-lg shadow space-y-3">
+                <h3 class="font-semibold text-xs text-gray-800">Google Drive Backup / Restore</h3>
+                <p class="text-xs text-gray-500">Download your database file to save to Google Drive or restore anytime.</p>
+                <div class="flex gap-2">
+                    <button onclick="backupData()" class="flex-1 bg-gray-800 text-white py-2 rounded text-xs font-medium hover:bg-gray-900">Export Backup JSON</button>
+                    <label class="flex-1 bg-gray-200 text-gray-800 py-2 rounded text-xs font-medium text-center cursor-pointer hover:bg-gray-300">
+                        Restore Backup <input type="file" accept=".json" onchange="restoreData(event)" class="hidden">
+                    </label>
+                </div>
+            </div>
+
+            <div class="bg-white p-4 rounded-lg shadow space-y-3">
+                <h3 class="font-semibold text-xs text-gray-800">Thermal Printer (58mm Bluetooth)</h3>
+                <button onclick="connectPrinter()" class="w-full bg-blue-600 text-white py-2 rounded text-xs font-medium hover:bg-blue-700">Connect Bluetooth Printer</button>
+                <p id="printer-status" class="text-xs text-gray-500 text-center">Status: Not Connected</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Scanner Modal -->
+    <div id="scanner-modal" class="fixed inset-0 bg-black/90 hidden flex flex-col items-center justify-center p-4 z-50">
+        <div class="w-full max-w-sm bg-white rounded-lg p-3 space-y-3">
+            <div class="flex justify-between items-center">
+                <h3 class="font-bold text-sm text-gray-800">Scan Barcode / QR</h3>
+                <button onclick="stopBarcodeScanner()" class="text-xs text-red-600 font-bold px-2 py-1">Close</button>
+            </div>
+            <div class="relative overflow-hidden rounded bg-black aspect-square flex items-center justify-center">
+                <video id="scanner-video" class="w-full h-full object-cover" autoplay playsinline></video>
+                <canvas id="scanner-canvas" class="hidden"></canvas>
+            </div>
+            <p class="text-center text-xs text-gray-500">Tap screen to input code manually if needed</p>
+        </div>
+    </div>
+
+    <!-- Quick Stock Add Modal -->
+    <div id="quick-stock-modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-lg p-4 w-full max-w-xs space-y-3">
+            <h3 class="font-bold text-sm text-gray-800" id="qs-modal-title">Add Stock Quantity</h3>
+            <input type="hidden" id="qs-prod-id">
+            <div>
+                <label class="text-[11px] text-gray-600">Quantity to Add (e.g. 1200)</label>
+                <input type="number" id="qs-amount" class="w-full border rounded px-3 py-1.5 text-xs mt-0.5" value="1">
+            </div>
+            <div class="flex gap-2 pt-2">
+                <button onclick="closeQuickStockModal()" class="flex-1 bg-gray-200 py-2 rounded text-xs">Cancel</button>
+                <button onclick="confirmQuickStock()" class="flex-1 bg-emerald-600 text-white py-2 rounded text-xs">Add Stock</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Customer Search Modal -->
+    <div id="customer-search-modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-lg p-4 w-full max-w-sm space-y-3">
+            <div class="flex justify-between items-center">
+                <h3 class="font-bold text-sm text-gray-800">Search Customer</h3>
+                <button onclick="closeCustomerSearchModal()" class="text-xs text-red-600 font-bold">Close</button>
+            </div>
+            <input type="text" id="cust-search-input" placeholder="Type name or phone number..." oninput="filterCustomerSearch()" class="w-full border rounded px-3 py-2 text-xs">
+            <div id="cust-search-results" class="max-h-48 overflow-y-auto divide-y text-xs space-y-1">
+                <!-- Populated dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Void Transaction Modal -->
+    <div id="void-modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-lg p-4 w-full max-w-sm space-y-3">
+            <h3 class="font-bold text-sm text-red-700">Void Transaction</h3>
+            <input type="hidden" id="void-sale-id">
+            <p class="text-xs text-gray-600" id="void-sale-info">Are you sure you want to void this sale?</p>
+            <div>
+                <label class="text-[11px] text-gray-600">Reason / Note for Voiding</label>
+                <input type="text" id="void-note" placeholder="e.g. Customer returned items" class="w-full border rounded px-3 py-1.5 text-xs mt-0.5">
+            </div>
+            <div class="flex items-center gap-2 pt-1">
+                <input type="checkbox" id="void-restock" checked class="rounded text-emerald-600">
+                <label class="text-xs text-gray-700">Replenish stock back to inventory</label>
+            </div>
+            <div class="flex gap-2 pt-2">
+                <button onclick="closeVoidModal()" class="flex-1 bg-gray-200 py-2 rounded text-xs">Cancel</button>
+                <button onclick="confirmVoidSale()" class="flex-1 bg-red-600 text-white py-2 rounded text-xs font-bold">Confirm Void</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Modal -->
+    <div id="product-modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-lg p-4 w-full max-w-sm space-y-2.5 max-h-[90vh] overflow-y-auto">
+            <h3 class="font-bold text-sm text-gray-800">Add / Edit Product</h3>
+            <input type="hidden" id="prod-id">
+            <div>
+                <label class="text-[11px] text-gray-600">Product Name</label>
+                <input type="text" id="prod-name" class="w-full border rounded px-3 py-1.5 text-xs mt-0.5">
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+                <div>
+                    <label class="text-[11px] text-gray-600">SKU</label>
+                    <input type="text" id="prod-sku" class="w-full border rounded px-3 py-1.5 text-xs mt-0.5">
+                </div>
+                <div>
+                    <label class="text-[11px] text-gray-600">Barcode</label>
+                    <input type="text" id="prod-barcode" class="w-full border rounded px-3 py-1.5 text-xs mt-0.5">
+                </div>
+            </div>
+            <div>
+                <label class="text-[11px] text-gray-600">Category</label>
+                <input type="text" id="prod-cat" class="w-full border rounded px-3 py-1.5 text-xs mt-0.5" value="General">
+            </div>
+            <div class="grid grid-cols-3 gap-2">
+                <div>
+                    <label class="text-[11px] text-gray-600">Cost ($)</label>
+                    <input type="number" id="prod-cost" class="w-full border rounded px-2 py-1.5 text-xs mt-0.5" step="0.01">
+                </div>
+                <div>
+                    <label class="text-[11px] text-gray-600">Price ($)</label>
+                    <input type="number" id="prod-price" class="w-full border rounded px-2 py-1.5 text-xs mt-0.5" step="0.01">
+                </div>
+                <div>
+                    <label class="text-[11px] text-gray-600">Stock</label>
+                    <input type="number" id="prod-stock" class="w-full border rounded px-2 py-1.5 text-xs mt-0.5" value="10">
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+                <div>
+                    <label class="text-[11px] text-gray-600">Low Stock Alert</label>
+                    <input type="number" id="prod-lowstock" class="w-full border rounded px-2 py-1.5 text-xs mt-0.5" value="5">
+                </div>
+                <div>
+                    <label class="text-[11px] text-gray-600">Image URL</label>
+                    <input type="text" id="prod-image" class="w-full border rounded px-2 py-1.5 text-xs mt-0.5" placeholder="https://...">
+                </div>
+            </div>
+            <div class="flex gap-2 pt-2">
+                <button onclick="closeProductModal()" class="flex-1 bg-gray-200 py-2 rounded text-xs">Cancel</button>
+                <button onclick="saveProduct()" class="flex-1 bg-emerald-600 text-white py-2 rounded text-xs">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Customer Modal -->
+    <div id="customer-modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-lg p-4 w-full max-w-sm space-y-3">
+            <h3 class="font-bold text-sm text-gray-800">Add Customer</h3>
+            <input type="hidden" id="cust-id">
+            <div>
+                <label class="text-[11px] text-gray-600">Customer Name</label>
+                <input type="text" id="cust-name" class="w-full border rounded px-3 py-1.5 text-xs mt-0.5">
+            </div>
+            <div>
+                <label class="text-[11px] text-gray-600">Phone Number</label>
+                <input type="text" id="cust-phone" class="w-full border rounded px-3 py-1.5 text-xs mt-0.5" placeholder="e.g. 077...">
+            </div>
+            <div>
+                <label class="text-[11px] text-gray-600">Initial Credit/Tab Due ($)</label>
+                <input type="number" id="cust-credit" class="w-full border rounded px-3 py-1.5 text-xs mt-0.5" value="0" step="0.01">
+            </div>
+            <div class="flex gap-2 pt-2">
+                <button onclick="closeCustomerModal()" class="flex-1 bg-gray-200 py-2 rounded text-xs">Cancel</button>
+                <button onclick="saveCustomer()" class="flex-1 bg-emerald-600 text-white py-2 rounded text-xs">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pay Debt Modal -->
+    <div id="payment-modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-lg p-4 w-full max-w-sm space-y-3">
+            <h3 class="font-bold text-sm text-gray-800" id="pay-modal-title">Settle Customer Debt</h3>
+            <input type="hidden" id="pay-cust-id">
+            <div>
+                <label class="text-[11px] text-gray-600">Payment Amount ($)</label>
+                <input type="number" id="pay-amount-input" class="w-full border rounded px-3 py-1.5 text-xs mt-0.5" step="0.01">
+            </div>
+            <div class="flex gap-2 pt-2">
+                <button onclick="closePaymentModal()" class="flex-1 bg-gray-200 py-2 rounded text-xs">Cancel</button>
+                <button onclick="processDebtPayment()" class="flex-1 bg-emerald-600 text-white py-2 rounded text-xs">Record Payment</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script Logic -->
+    <script>
+        let db = {
+            products: [
+                { id: 1, name: "Coca Cola 500ml", sku: "CC500", barcode: "5449000000996", category: "Beverages", cost: 1.00, price: 1.50, stock: 39, lowStock: 5, dateAdded: "11/13/2026", image: "" },
+                { id: 2, name: "Fresh Bread", sku: "BRD01", barcode: "6001000100016", category: "Bakery", cost: 1.20, price: 2.00, stock: 13, lowStock: 3, dateAdded: "11/13/2026", image: "" }
+            ],
+            customers: [
+                { id: 1, name: "Walk-in Customer", phone: "-", totalSpent: 0, creditDue: 0, visits: 0 }
+            ],
+            expenses: [],
+            sales: [],
+            settings: { currency: "USD", tax: 15 }
+        };
+
+        let cart = [];
+        let bluetoothDevice = null;
+        let bluetoothCharacteristic = null;
+        let mediaStream = null;
+
+        function init() {
+            // Check both old and new storage keys to ensure seamless data recovery
+            const saved = localStorage.getItem('earth_circle_pos_master') || localStorage.getItem('earth_circle_pos_pro');
+            if (saved) {
+                try { db = JSON.parse(saved); } catch(e){}
+            }
+            saveDB(); // Ensure master key is populated
+            loadSettingsToUI();
+            renderProducts();
+            renderInventory();
+            renderCustomers();
+            renderExpenses();
+            renderAudit();
+        }
+
+        function saveDB() {
+            localStorage.setItem('earth_circle_pos_master', JSON.stringify(db));
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.getElementById('tab-' + tabId).classList.add('active');
+            if(tabId === 'audit') renderAudit();
+            if(tabId === 'inventory') renderInventory();
+            if(tabId === 'customers') renderCustomers();
+            if(tabId === 'expenses') renderExpenses();
+            if(tabId === 'pos') renderCustomerDropdown();
+        }
+
+        function loadSettingsToUI() {
+            document.getElementById('set-currency').value = db.settings.currency;
+            document.getElementById('set-tax').value = db.settings.tax;
+            document.getElementById('currency-label').innerText = db.settings.currency;
+            document.getElementById('tax-label').innerText = db.settings.tax;
+        }
+
+        function saveSettings() {
+            db.settings.currency = document.getElementById('set-currency').value;
+            db.settings.tax = parseFloat(document.getElementById('set-tax').value) || 0;
+            saveDB();
+            loadSettingsToUI();
+            renderCart();
+            alert('Settings saved successfully!');
+        }
+
+        function renderCustomerDropdown() {
+            const select = document.getElementById('pos-customer-select');
+            select.innerHTML = '<option value="1">Walk-in Customer</option>';
+            db.customers.forEach(c => {
+                if(c.id !== 1) {
+                    select.innerHTML += `<option value="${c.id}">${c.name} (${c.phone || '-'}) ${c.creditDue > 0 ? '[Due: $'+c.creditDue.toFixed(2)+']':''}</option>`;
+                }
+            });
+            select.value = "1";
+        }
+
+        function renderProducts() {
+            const grid = document.getElementById('product-grid');
+            const search = document.getElementById('search-product').value.toLowerCase();
+            const cat = document.getElementById('filter-cat').value;
+            
+            const cats = [...new Set(db.products.map(p => p.category))];
+            const catSelect = document.getElementById('filter-cat');
+            const currentCatVal = catSelect.value;
+            catSelect.innerHTML = '<option value="">All Categories</option>' + cats.map(c => `<option value="${c}">${c}</option>`).join('');
+            catSelect.value = currentCatVal;
+
+            grid.innerHTML = '';
+            const filtered = db.products.filter(p => {
+                return (p.name.toLowerCase().includes(search) || (p.barcode && p.barcode.toLowerCase().includes(search)) || (p.sku && p.sku.toLowerCase().includes(search))) && (cat === '' || p.category === cat);
+            });
+
+            if(filtered.length === 0) {
+                grid.innerHTML = `<p class="col-span-full text-center text-gray-400 text-sm py-8">No products found.</p>`;
+                return;
+            }
+
+            filtered.forEach(p => {
+                const isLow = p.stock <= (p.lowStock || 5);
+                grid.innerHTML += `
+                    <div onclick="selectProductAndClearSearch(${p.id})" class="bg-white p-2.5 rounded-lg shadow-sm border ${isLow ? 'border-red-300 bg-red-50/30' : 'border-emerald-100'} hover:border-emerald-500 cursor-pointer flex flex-col justify-between active:bg-emerald-50">
+                        <div>
+                            <h4 class="font-semibold text-xs text-gray-800 line-clamp-2">${p.name}</h4>
+                            <p class="text-[10px] text-gray-400 mt-0.5">${p.category}</p>
+                        </div>
+                        <div class="flex justify-between items-center mt-2">
+                            <span class="font-bold text-emerald-700 text-xs">${db.settings.currency} ${p.price.toFixed(2)}</span>
+                            <span class="text-[10px] px-1.5 py-0.5 rounded ${isLow ? 'bg-red-100 text-red-700 font-bold' : 'bg-gray-100 text-gray-600'}">Stock: ${p.stock}</span>
+                        </div>
+                    </div>
+                `;
+            });
+            renderCustomerDropdown();
+        }
+
+        function selectProductAndClearSearch(id) {
+            addToCart(id);
+            document.getElementById('search-product').value = '';
+            renderProducts();
+        }
+
+        function filterProducts() { renderProducts(); }
+
+        function addToCart(id) {
+            const product = db.products.find(p => p.id === id);
+            if(!product || product.stock <= 0) {
+                alert('Out of stock!');
+                return;
+            }
+            const existing = cart.find(item => item.id === id);
+            if(existing) {
+                if(existing.qty < product.stock) existing.qty++;
+                else alert('Reached max stock limit.');
+            } else {
+                cart.push({ id: product.id, name: product.name, price: product.price, cost: product.cost, qty: 1 });
+            }
+            renderCart();
+        }
+
+        function renderCart() {
+            const container = document.getElementById('cart-items');
+            if(cart.length === 0) {
+                container.innerHTML = `<p class="text-gray-400 text-center py-6 text-sm">Cart is empty</p>`;
+                document.getElementById('cart-subtotal').innerText = '0.00';
+                document.getElementById('cart-tax').innerText = '0.00';
+                document.getElementById('cart-total').innerText = '0.00';
+                document.getElementById('cash-tendered').value = '';
+                document.getElementById('change-due-amount').innerText = '0.00';
+                return;
+            }
+
+            container.innerHTML = '';
+            let subtotal = 0;
+            cart.forEach((item, index) => {
+                subtotal += item.price * item.qty;
+                container.innerHTML += `
+                    <div class="py-2 flex justify-between items-center text-xs">
+                        <div>
+                            <p class="font-medium text-gray-800">${item.name}</p>
+                            <p class="text-[10px] text-gray-500">${db.settings.currency} ${item.price.toFixed(2)} x ${item.qty}</p>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <button onclick="adjustQty(${index}, 1)" class="w-5 h-5 bg-gray-200 rounded font-bold text-xs">+</button>
+                            <button onclick="adjustQty(${index}, -1)" class="w-5 h-5 bg-gray-200 rounded font-bold text-xs">-</button>
+                            <button onclick="removeFromCart(${index})" class="w-5 h-5 bg-red-100 text-red-700 rounded font-bold text-xs ml-1" title="Remove">✕</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            const discountVal = parseFloat(document.getElementById('cart-discount').value) || 0;
+            const discountType = document.getElementById('cart-discount-type').value;
+            let discountAmount = discountType === 'percent' ? subtotal * (discountVal / 100) : discountVal;
+            if(discountAmount > subtotal) discountAmount = subtotal;
+
+            const taxable = subtotal - discountAmount;
+            const tax = taxable * (db.settings.tax / 100);
+            const total = taxable + tax;
+
+            document.getElementById('cart-subtotal').innerText = subtotal.toFixed(2);
+            document.getElementById('cart-tax').innerText = tax.toFixed(2);
+            document.getElementById('cart-total').innerText = total.toFixed(2);
+            calculateChange();
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            renderCart();
+        }
+
+        function calculateChange() {
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            const discountVal = parseFloat(document.getElementById('cart-discount').value) || 0;
+            const discountType = document.getElementById('cart-discount-type').value;
+            let discount = discountType === 'percent' ? subtotal * (discountVal / 100) : discountVal;
+            const taxable = subtotal - discount;
+            const tax = taxable * (db.settings.tax / 100);
+            const total = taxable + tax;
+
+            const tendered = parseFloat(document.getElementById('cash-tendered').value) || 0;
+            const changeLabel = document.getElementById('change-due-label');
+            const changeAmt = document.getElementById('change-due-amount');
+
+            if (tendered >= total) {
+                changeLabel.innerText = "Change Due:";
+                changeAmt.innerText = (tendered - total).toFixed(2);
+                changeAmt.className = "text-emerald-700 font-bold";
+            } else {
+                changeLabel.innerText = "Insufficient (Short):";
+                changeAmt.innerText = (total - tendered).toFixed(2);
+                changeAmt.className = "text-red-600 font-bold";
+            }
+        }
+
+        function adjustQty(index, change) {
+            cart[index].qty += change;
+            if(cart[index].qty <= 0) cart.splice(index, 1);
+            renderCart();
+        }
+
+        function clearCart() {
+            cart = [];
+            document.getElementById('cart-discount').value = 0;
+            document.getElementById('cash-tendered').value = '';
+            renderCart();
+        }
+
+        function checkout(isTab = false) {
+            if(cart.length === 0) return;
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            const discountVal = parseFloat(document.getElementById('cart-discount').value) || 0;
+            const discountType = document.getElementById('cart-discount-type').value;
+            let discount = discountType === 'percent' ? subtotal * (discountVal / 100) : discountVal;
+            const taxable = subtotal - discount;
+            const tax = taxable * (db.settings.tax / 100);
+            const total = taxable + tax;
+
+            const tendered = parseFloat(document.getElementById('cash-tendered').value) || total;
+
+            cart.forEach(item => {
+                const p = db.products.find(prod => prod.id === item.id);
+                if(p) p.stock -= item.qty;
+            });
+
+            const customerId = document.getElementById('pos-customer-select').value;
+            const customer = db.customers.find(c => c.id == customerId) || db.customers[0];
+            
+            customer.visits = (customer.visits || 0) + 1;
+
+            if (isTab) {
+                customer.creditDue = (customer.creditDue || 0) + total;
+                if(customer.id === 1) {
+                    alert('Walk-in customers cannot take store credit. Please select or add a registered client.');
+                    return;
+                }
+            } else {
+                customer.totalSpent += total;
+                if (tendered < total) {
+                    const shortAmount = total - tendered;
+                    if (customer.id === 1) {
+                        alert('Walk-in customer cannot have a shortfall balance. Please select a registered client.');
+                        return;
+                    }
+                    customer.creditDue = (customer.creditDue || 0) + shortAmount;
+                }
+            }
+
+            const sale = {
+                id: Date.now(),
+                date: new Date().toLocaleString(),
+                items: [...cart],
+                subtotal, discount, tax, total, tendered,
+                customer: customer.name,
+                customerId: customer.id,
+                isTab,
+                isVoided: false,
+                currency: db.settings.currency
+            };
+
+            db.sales.unshift(sale);
+            saveDB();
+            printReceipt(sale);
+            
+            // Clear checkout session & reset search + customer default
+            clearCart();
+            document.getElementById('search-product').value = '';
+            renderCustomerDropdown();
+            renderProducts();
+            renderCustomers();
+            alert(isTab ? 'Sale put on customer credit tab!' : 'Sale completed successfully!');
+        }
+
+        // --- CUSTOMER SEARCH MODAL ---
+        function openCustomerSearchModal() {
+            document.getElementById('cust-search-input').value = '';
+            filterCustomerSearch();
+            document.getElementById('customer-search-modal').classList.remove('hidden');
+        }
+        function closeCustomerSearchModal() { document.getElementById('customer-search-modal').classList.add('hidden'); }
+
+        function filterCustomerSearch() {
+            const query = document.getElementById('cust-search-input').value.toLowerCase();
+            const resultsDiv = document.getElementById('cust-search-results');
+            resultsDiv.innerHTML = '';
+            const filtered = db.customers.filter(c => c.name.toLowerCase().includes(query) || (c.phone && c.phone.toLowerCase().includes(query)));
+            if(filtered.length === 0) {
+                resultsDiv.innerHTML = `<p class="text-gray-400 text-center py-2">No customers found.</p>`;
+                return;
+            }
+            filtered.forEach(c => {
+                resultsDiv.innerHTML += `
+                    <div onclick="selectCustomerFromSearch(${c.id})" class="p-2 hover:bg-emerald-50 cursor-pointer flex justify-between items-center">
+                        <div>
+                            <p class="font-semibold text-gray-800">${c.name}</p>
+                            <p class="text-[10px] text-gray-500">Phone: ${c.phone || '-'}</p>
+                        </div>
+                        <span class="text-emerald-700 font-bold">Select</span>
+                    </div>
+                `;
+            });
+        }
+
+        function selectCustomerFromSearch(id) {
+            document.getElementById('pos-customer-select').value = id;
+            closeCustomerSearchModal();
+        }
+
+        // --- NATIVE CAMERA BARCODE SCANNER ---
+        async function startBarcodeScanner() {
+            document.getElementById('scanner-modal').classList.remove('hidden');
+            try {
+                mediaStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+                const videoElement = document.getElementById('scanner-video');
+                videoElement.srcObject = mediaStream;
+                videoElement.play();
+            } catch (err) {
+                alert('Camera access denied or unavailable.');
+                stopBarcodeScanner();
+            }
+        }
+
+        function stopBarcodeScanner() {
+            document.getElementById('scanner-modal').classList.add('hidden');
+            if (mediaStream) {
+                mediaStream.getTracks().forEach(track => track.stop());
+                mediaStream = null;
+            }
+        }
+
+        document.addEventListener('click', function(e) {
+            if(e.target && e.target.id === 'scanner-video') {
+                const code = prompt("Enter or scan barcode text manually:");
+                if(code) {
+                    document.getElementById('search-product').value = code;
+                    stopBarcodeScanner();
+                    filterProducts();
+                }
+            }
+        });
+
+        // --- INVENTORY MANAGEMENT & QUICK STOCK ---
+        function renderInventory() {
+            const tbody = document.getElementById('inventory-table-body');
+            tbody.innerHTML = '';
+            db.products.forEach(p => {
+                const isLow = p.stock <= (p.lowStock || 5);
+                tbody.innerHTML += `
+                    <tr class="border-b border-gray-100 hover:bg-gray-50 ${isLow ? 'bg-red-50/50' : ''}">
+                        <td class="p-2.5 font-medium text-gray-800">${p.name}<br><span class="text-[10px] text-emerald-700">Added: ${p.dateAdded || 'N/A'}</span></td>
+                        <td class="p-2.5 text-gray-500">${p.sku || '-'}<br><span class="text-[10px]">${p.barcode || ''}</span></td>
+                        <td class="p-2.5 text-gray-700">${db.settings.currency} ${(p.cost || 0).toFixed(2)} / ${db.settings.currency} ${p.price.toFixed(2)}</td>
+                        <td class="p-2.5">
+                            <div class="flex items-center gap-1.5">
+                                <span class="${isLow ? 'text-red-600 font-bold' : 'text-gray-700'}">${p.stock}</span>
+                                <button onclick="openQuickStockModal(${p.id})" class="bg-emerald-700 text-white px-1.5 py-0.5 rounded text-[10px] font-bold">+ Stock</button>
+                                <button onclick="quickStockChange(${p.id}, -1)" class="w-5 h-5 bg-red-100 text-red-800 rounded font-bold text-xs">-</button>
+                            </div>
+                        </td>
+                        <td class="p-2.5 text-right space-x-1">
+                            <button onclick="editProduct(${p.id})" class="text-blue-600 hover:underline">Edit</button>
+                            <button onclick="deleteProduct(${p.id})" class="text-red-600 hover:underline">Del</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function openQuickStockModal(id) {
+            const p = db.products.find(prod => prod.id === id);
+            if(!p) return;
+            document.getElementById('qs-prod-id').value = p.id;
+            document.getElementById('qs-modal-title').innerText = `Add Stock to ${p.name}`;
+            document.getElementById('qs-amount').value = "10";
+            document.getElementById('quick-stock-modal').classList.remove('hidden');
+        }
+
+        function closeQuickStockModal() { document.getElementById('quick-stock-modal').classList.add('hidden'); }
+
+        function confirmQuickStock() {
+            const id = document.getElementById('qs-prod-id').value;
+            const amt = parseInt(document.getElementById('qs-amount').value) || 0;
+            const p = db.products.find(prod => prod.id == id);
+            if(p && amt > 0) {
+                p.stock += amt;
+                saveDB();
+                closeQuickStockModal();
+                renderInventory();
+                renderProducts();
+                alert(`Successfully added ${amt} units to ${p.name}!`);
+            }
+        }
+
+        function quickStockChange(id, amount) {
+            const p = db.products.find(prod => prod.id === id);
+            if(p) {
+                p.stock += amount;
+                if(p.stock < 0) p.stock = 0;
+                saveDB();
+                renderInventory();
+                renderProducts();
+            }
+        }
+
+        function openProductModal(id = null) {
+            document.getElementById('prod-id').value = '';
+            document.getElementById('prod-name').value = '';
+            document.getElementById('prod-sku').value = '';
+            document.getElementById('prod-barcode').value = '';
+            document.getElementById('prod-cat').value = 'General';
+            document.getElementById('prod-cost').value = '';
+            document.getElementById('prod-price').value = '';
+            document.getElementById('prod-stock').value = '10';
+            document.getElementById('prod-lowstock').value = '5';
+            document.getElementById('prod-image').value = '';
+
+            if(id) {
+                const p = db.products.find(prod => prod.id === id);
+                if(p) {
+                    document.getElementById('prod-id').value = p.id;
+                    document.getElementById('prod-name').value = p.name;
+                    document.getElementById('prod-sku').value = p.sku || '';
+                    document.getElementById('prod-barcode').value = p.barcode || '';
+                    document.getElementById('prod-cat').value = p.category;
+                    document.getElementById('prod-cost').value = p.cost || 0;
+                    document.getElementById('prod-price').value = p.price;
+                    document.getElementById('prod-stock').value = p.stock;
+                    document.getElementById('prod-lowstock').value = p.lowStock || 5;
+                    document.getElementById('prod-image').value = p.image || '';
+                }
+            }
+            document.getElementById('product-modal').classList.remove('hidden');
+        }
+
+        function closeProductModal() { document.getElementById('product-modal').classList.add('hidden'); }
+
+        function saveProduct() {
+            const id = document.getElementById('prod-id').value;
+            const name = document.getElementById('prod-name').value;
+            const sku = document.getElementById('prod-sku').value;
+            const barcode = document.getElementById('prod-barcode').value;
+            const category = document.getElementById('prod-cat').value || 'General';
+            const cost = parseFloat(document.getElementById('prod-cost').value) || 0;
+            const price = parseFloat(document.getElementById('prod-price').value) || 0;
+            const stock = parseInt(document.getElementById('prod-stock').value) || 0;
+            const lowStock = parseInt(document.getElementById('prod-lowstock').value) || 5;
+            const image = document.getElementById('prod-image').value;
+
+            if(!name) { alert('Product name required'); return; }
+
+            const todayStr = new Date().toLocaleDateString();
+
+            if(id) {
+                const p = db.products.find(prod => prod.id == id);
+                if(p) { p.name = name; p.sku = sku; p.barcode = barcode; p.category = category; p.cost = cost; p.price = price; p.stock = stock; p.lowStock = lowStock; p.image = image; }
+            } else {
+                db.products.push({ id: Date.now(), name, sku, barcode, category, cost, price, stock, lowStock, dateAdded: todayStr, image });
+            }
+            saveDB();
+            closeProductModal();
+            renderInventory();
+            renderProducts();
+        }
+
+        function editProduct(id) { openProductModal(id); }
+        function deleteProduct(id) {
+            if(confirm('Delete this product?')) {
+                db.products = db.products.filter(p => p.id !== id);
+                saveDB();
+                renderInventory();
+                renderProducts();
+            }
+        }
+
+        function importCSV(event) {
+            const file = event.target.files[0];
+            if(!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const lines = e.target.result.split('\n');
+                let count = 0;
+                const todayStr = new Date().toLocaleDateString();
+                for(let i = 1; i < lines.length; i++) {
+                    const cols = lines[i].split(',');
+                    if(cols.length >= 4) {
+                        db.products.push({
+                            id: Date.now() + i,
+                            name: cols[0].trim(),
+                            category: cols[1].trim() || 'General',
+                            cost: parseFloat(cols[2]) || 0,
+                            price: parseFloat(cols[3]) || 0,
+                            stock: parseInt(cols[4]) || 10,
+                            sku: cols[5] ? cols[5].trim() : '',
+                            barcode: cols[6] ? cols[6].trim() : '',
+                            dateAdded: todayStr
+                        });
+                        count++;
+                    }
+                }
+                saveDB();
+                renderInventory();
+                renderProducts();
+                alert(`Successfully imported ${count} products!`);
+            };
+            reader.readAsText(file);
+        }
+
+        // --- CUSTOMERS & DEBT PAYMENTS ---
+        function renderCustomers() {
+            const tbody = document.getElementById('customer-table-body');
+            tbody.innerHTML = '';
+            db.customers.forEach(c => {
+                tbody.innerHTML += `
+                    <tr class="border-b border-gray-100">
+                        <td class="p-2.5 font-medium text-gray-800">${c.name}</td>
+                        <td class="p-2.5 text-gray-500">${c.phone || '-'}</td>
+                        <td class="p-2.5 text-gray-700">${db.settings.currency} ${c.totalSpent.toFixed(2)}</td>
+                        <td class="p-2.5 text-red-600 font-semibold">${db.settings.currency} ${(c.creditDue || 0).toFixed(2)}</td>
+                        <td class="p-2.5 text-right space-x-1">
+                            ${c.id !== 1 && c.creditDue > 0 ? `<button onclick="openPaymentModal(${c.id})" class="text-emerald-600 font-bold hover:underline">Pay Debt</button>` : ''}
+                            ${c.id !== 1 ? `<button onclick="deleteCustomer(${c.id})" class="text-red-600 hover:underline">Del</button>` : ''}
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function openCustomerModal() {
+            document.getElementById('cust-name').value = '';
+            document.getElementById('cust-phone').value = '';
+            document.getElementById('cust-credit').value = '0';
+            document.getElementById('customer-modal').classList.remove('hidden');
+        }
+        function closeCustomerModal() { document.getElementById('customer-modal').classList.add('hidden'); }
+        
+        function saveCustomer() {
+            const name = document.getElementById('cust-name').value;
+            const phone = document.getElementById('cust-phone').value;
+            const creditDue = parseFloat(document.getElementById('cust-credit').value) || 0;
+            if(!name) { alert('Customer name required'); return; }
+            const newCust = { id: Date.now(), name, phone: phone || '-', totalSpent: 0, creditDue, visits: 0 };
+            db.customers.push(newCust);
+            saveDB();
+            closeCustomerModal();
+            renderCustomers();
+            renderCustomerDropdown();
+            document.getElementById('pos-customer-select').value = newCust.id;
+        }
+
+        function openPaymentModal(custId) {
+            const c = db.customers.find(cust => cust.id === custId);
+            if(!c) return;
+            document.getElementById('pay-cust-id').value = c.id;
+            document.getElementById('pay-modal-title').innerText = `Settle Debt for ${c.name} (Due: $${c.creditDue.toFixed(2)})`;
+            document.getElementById('pay-amount-input').value = c.creditDue.toFixed(2);
+            document.getElementById('payment-modal').classList.remove('hidden');
+        }
+
+        function closePaymentModal() { document.getElementById('payment-modal').classList.add('hidden'); }
+
+        function processDebtPayment() {
+            const custId = document.getElementById('pay-cust-id').value;
+            const amount = parseFloat(document.getElementById('pay-amount-input').value) || 0;
+            const c = db.customers.find(cust => cust.id == custId);
+            if(!c || amount <= 0) { alert('Invalid payment amount'); return; }
+
+            if(amount > c.creditDue) {
+                alert('Payment cannot exceed current credit due.');
+                return;
+            }
+
+            c.creditDue -= amount;
+            c.totalSpent += amount;
+
+            db.sales.unshift({
+                id: Date.now(),
+                date: new Date().toLocaleString(),
+                items: [{ name: 'Debt Repayment', price: amount, qty: 1 }],
+                subtotal: amount, discount: 0, tax: 0, total: amount, tendered: amount,
+                customer: c.name,
+                isVoided: false,
+                currency: db.settings.currency
+            });
+
+            saveDB();
+            closePaymentModal();
+            renderCustomers();
+            renderCustomerDropdown();
+            alert('Debt payment recorded successfully!');
+        }
+
+        function deleteCustomer(id) {
+            if(confirm('Delete customer?')) {
+                db.customers = db.customers.filter(c => c.id !== id);
+                saveDB();
+                renderCustomers();
+                renderCustomerDropdown();
+            }
+        }
+
+        // --- EXPENSES WITH CATEGORIES ---
+        function addExpense() {
+            const title = document.getElementById('exp-title').value;
+            const category = document.getElementById('exp-category').value;
+            const amount = parseFloat(document.getElementById('exp-amount').value) || 0;
+            if(!title || amount <= 0) { alert('Enter valid expense title and amount'); return; }
+            db.expenses.unshift({ id: Date.now(), date: new Date().toLocaleDateString(), title, category, amount });
+            document.getElementById('exp-title').value = '';
+            document.getElementById('exp-amount').value = '';
+            saveDB();
+            renderExpenses();
+        }
+
+        function renderExpenses() {
+            const tbody = document.getElementById('expense-table-body');
+            tbody.innerHTML = '';
+            if(db.expenses.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-gray-400">No expenses recorded.</td></tr>`;
+                return;
+            }
+            db.expenses.forEach(e => {
+                tbody.innerHTML += `
+                    <tr class="border-b">
+                        <td class="p-2.5 text-gray-500">${e.date}</td>
+                        <td class="p-2.5 font-medium text-gray-800">${e.title}<br><span class="text-[10px] text-amber-700 font-semibold">[${e.category || 'General'}]</span></td>
+                        <td class="p-2.5 text-right font-bold text-amber-700">${db.settings.currency} ${e.amount.toFixed(2)}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        // --- VOID TRANSACTIONS ---
+        function openVoidModal(saleId) {
+            const sale = db.sales.find(s => s.id == saleId);
+            if(!sale || sale.isVoided) return;
+            document.getElementById('void-sale-id').value = sale.id;
+            document.getElementById('void-sale-info').innerText = `Void Sale #${sale.id.toString().slice(-6)} - Total: $${sale.total.toFixed(2)} (${sale.customer})`;
+            document.getElementById('void-note').value = '';
+            document.getElementById('void-restock').checked = true;
+            document.getElementById('void-modal').classList.remove('hidden');
+        }
+
+        function closeVoidModal() { document.getElementById('void-modal').classList.add('hidden'); }
+
+        function confirmVoidSale() {
+            const saleId = document.getElementById('void-sale-id').value;
+            const note = document.getElementById('void-note').value;
+            const restock = document.getElementById('void-restock').checked;
+            const sale = db.sales.find(s => s.id == saleId);
+
+            if(sale && !sale.isVoided) {
+                sale.isVoided = true;
+                sale.voidNote = note ? `Voided: ${note}` : 'Voided transaction';
+
+                // Restock items if selected
+                if(restock && sale.items) {
+                    sale.items.forEach(item => {
+                        const p = db.products.find(prod => prod.id === item.id);
+                        if(p) {
+                            p.stock += item.qty;
+                        }
+                    });
+                }
+
+                saveDB();
+                closeVoidModal();
+                renderAudit();
+                renderInventory();
+                renderProducts();
+                alert('Transaction voided successfully!');
+            }
+        }
+
+        // --- AUDIT & TOP/FREQUENT CUSTOMERS ---
+        function renderAudit() {
+            const activeSales = db.sales.filter(s => !s.isVoided);
+            const totalRev = activeSales.reduce((sum, s) => sum + s.total, 0);
+            const totalExp = db.expenses.reduce((sum, e) => sum + e.amount, 0);
+            const netProfit = totalRev - totalExp;
+
+            document.getElementById('audit-total-revenue').innerText = `${db.settings.currency} ${totalRev.toFixed(2)}`;
+            document.getElementById('audit-total-expenses').innerText = `${db.settings.currency} ${totalExp.toFixed(2)}`;
+            document.getElementById('audit-net-profit').innerText = `${db.settings.currency} ${netProfit.toFixed(2)}`;
+
+            // Top Payers
+            const topPayersDiv = document.getElementById('audit-top-payers');
+            const sortedBySpend = [...db.customers].filter(c => c.id !== 1).sort((a,b) => b.totalSpent - a.totalSpent).slice(0, 3);
+            if(sortedBySpend.length === 0 || sortedBySpend.every(c => c.totalSpent === 0)) {
+                topPayersDiv.innerHTML = `<p class="text-gray-400">No customer spending data.</p>`;
+            } else {
+                topPayersDiv.innerHTML = sortedBySpend.map(c => `<div class="flex justify-between"><span>${c.name}</span><span class="font-bold text-emerald-700">$${c.totalSpent.toFixed(2)}</span></div>`).join('');
+            }
+
+            // Frequent Buyers
+            const frequentDiv = document.getElementById('audit-frequent-buyers');
+            const sortedByVisits = [...db.customers].filter(c => c.id !== 1).sort((a,b) => (b.visits||0) - (a.visits||0)).slice(0, 3);
+            if(sortedByVisits.length === 0 || sortedByVisits.every(c => (c.visits||0) === 0)) {
+                frequentDiv.innerHTML = `<p class="text-gray-400">No visit data yet.</p>`;
+            } else {
+                frequentDiv.innerHTML = sortedByVisits.map(c => `<div class="flex justify-between"><span>${c.name}</span><span class="font-bold text-blue-700">${c.visits || 0} visits</span></div>`).join('');
+            }
+
+            const list = document.getElementById('audit-transactions-list');
+            if(db.sales.length === 0) {
+                list.innerHTML = `<p class="text-gray-400">No sales recorded yet.</p>`;
+                return;
+            }
+            list.innerHTML = '';
+            db.sales.slice(0, 15).forEach(s => {
+                list.innerHTML += `
+                    <div class="bg-gray-50 p-2 rounded flex justify-between items-center border text-xs ${s.isVoided ? 'opacity-50 bg-red-50' : ''}">
+                        <div>
+                            <p class="font-semibold text-gray-800">Sale #${s.id.toString().slice(-6)} (${s.date}) ${s.isVoided ? '<span class="text-red-600 font-bold">[VOIDED]</span>' : ''}</p>
+                            <p class="text-[10px] text-gray-500">${s.customer} • ${s.items.length} items ${s.isVoided ? '• ' + s.voidNote : ''}</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="font-bold text-emerald-700">${s.currency} ${s.total.toFixed(2)}</span>
+                            {!s.isVoided ? `<button onclick="openVoidModal(${s.id})" class="bg-red-100 text-red-700 px-2 py-0.5 rounded text-[10px] font-bold">Void</button>` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function exportPDF() {
+            const element = document.getElementById('audit-printable-area');
+            html2pdf().from(element).save('Earth-Circle-Audit.pdf');
+        }
+
+        // --- BACKUP & RESTORE ---
+        function backupData() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db));
+            const dlAnchor = document.createElement('a');
+            dlAnchor.setAttribute("href", dataStr);
+            dlAnchor.setAttribute("download", "earth_circle_backup.json");
+            document.body.appendChild(dlAnchor);
+            dlAnchor.click();
+            dlAnchor.remove();
+        }
+
+        function restoreData(event) {
+            const file = event.target.files[0];
+            if(!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    db = JSON.parse(e.target.result);
+                    saveDB();
+                    init();
+                    alert('Database restored successfully!');
+                } catch(err) {
+                    alert('Invalid backup file.');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // --- BLUETOOTH THERMAL PRINTER ---
+        async function connectPrinter() {
+            try {
+                bluetoothDevice = await navigator.bluetooth.requestDevice({
+                    acceptAllDevices: true,
+                    optionalServices: ['000018f0-0000-1000-8000-00805f9b34fb', '49535343-fe7d-4ae5-8fa9-9fafd205e455', 'e7810a71-73ae-499d-8c15-faa9aef0c3f2']
+                });
+                const server = await bluetoothDevice.gatt.connect();
+                const services = await server.getPrimaryServices();
+                for(let service of services) {
+                    const characteristics = await service.getCharacteristics();
+                    for(let char of characteristics) {
+                        if(char.properties.write || char.properties.writeWithoutResponse) {
+                            bluetoothCharacteristic = char;
+                            document.getElementById('printer-status').innerText = `Status: Connected to ${bluetoothDevice.name || 'Printer'}`;
+                            document.getElementById('printer-status').className = 'text-xs text-emerald-600 font-semibold text-center';
+                            return;
+                        }
+                    }
+                }
+                alert('Connected to device, but no printable service found.');
+            } catch(error) {
+                console.log(error);
+                alert('Printer connection failed or cancelled.');
+            }
+        }
+
+        async function printReceipt(sale) {
+            if(!bluetoothCharacteristic) return;
+            try {
+                let encoder = new TextEncoder();
+                let commands = '\x1B\x40';
+                commands += '\x1B\x61\x01';
+                commands += 'EARTH CIRCLE\n';
+                commands += '-----------------';
+                commands += `\nReceipt: #${sale.id.toString().slice(-6)}`;
+                commands += `\nCustomer: ${sale.customer}`;
+                commands += `\nDate: ${sale.date}\n\n`;
+                commands += '\x1B\x61\x00';
+                
+                sale.items.forEach(i => {
+                    commands += `${i.name.substring(0, 20)}\n`;
+                    commands += `  ${i.qty} x ${i.price.toFixed(2)} = ${(i.qty * i.price).toFixed(2)}\n`;
+                });
+                
+                commands += '-----------------\n';
+                commands += `Subtotal: ${sale.subtotal.toFixed(2)}\n`;
+                if(sale.discount > 0) commands += `Discount: -${sale.discount.toFixed(2)}\n`;
+                commands += `Tax: ${sale.tax.toFixed(2)}\n`;
+                commands += `TOTAL: ${sale.currency} ${sale.total.toFixed(2)}\n`;
+                commands += `Tendered: ${sale.currency} ${(sale.tendered || sale.total).toFixed(2)}\n`;
+                if(sale.tendered > sale.total) {
+                    commands += `Change: ${sale.currency} ${(sale.tendered - sale.total).toFixed(2)}\n`;
+                }
+                commands += '-----------------\n';
+                commands += '\x1B\x61\x01';
+                commands += 'Thank you for shopping\nat Earth Circle!\n\n\n';
+
+                await bluetoothCharacteristic.writeValue(encoder.encode(commands));
+            } catch(err) {
+                console.error('Print error:', err);
+            }
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
