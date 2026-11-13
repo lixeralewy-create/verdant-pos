@@ -63,6 +63,7 @@
                         <select id="pos-customer-select" class="bg-white border rounded px-2 py-1 text-xs">
                             <option value="1">Walk-in Customer</option>
                         </select>
+                        <button onclick="openCustomerSearchModal()" class="bg-gray-700 text-white px-2 py-1 rounded text-[10px]" title="Search Customer">🔍</button>
                         <button onclick="openCustomerModal()" class="bg-emerald-700 text-white px-2 py-1 rounded text-[10px] font-bold">+ New</button>
                     </div>
                 </div>
@@ -250,7 +251,7 @@
                 </div>
 
                 <div>
-                    <h4 class="font-semibold text-xs text-gray-700 mb-2">Recent Transactions</h4>
+                    <h4 class="font-semibold text-xs text-gray-700 mb-2">Recent Transactions (Tap to Void)</h4>
                     <div id="audit-transactions-list" class="space-y-2 text-xs">
                         <p class="text-gray-400">No sales recorded yet.</p>
                     </div>
@@ -322,6 +323,41 @@
             <div class="flex gap-2 pt-2">
                 <button onclick="closeQuickStockModal()" class="flex-1 bg-gray-200 py-2 rounded text-xs">Cancel</button>
                 <button onclick="confirmQuickStock()" class="flex-1 bg-emerald-600 text-white py-2 rounded text-xs">Add Stock</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Customer Search Modal -->
+    <div id="customer-search-modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-lg p-4 w-full max-w-sm space-y-3">
+            <div class="flex justify-between items-center">
+                <h3 class="font-bold text-sm text-gray-800">Search Customer</h3>
+                <button onclick="closeCustomerSearchModal()" class="text-xs text-red-600 font-bold">Close</button>
+            </div>
+            <input type="text" id="cust-search-input" placeholder="Type name or phone number..." oninput="filterCustomerSearch()" class="w-full border rounded px-3 py-2 text-xs">
+            <div id="cust-search-results" class="max-h-48 overflow-y-auto divide-y text-xs space-y-1">
+                <!-- Populated dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Void Transaction Modal -->
+    <div id="void-modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-lg p-4 w-full max-w-sm space-y-3">
+            <h3 class="font-bold text-sm text-red-700">Void Transaction</h3>
+            <input type="hidden" id="void-sale-id">
+            <p class="text-xs text-gray-600" id="void-sale-info">Are you sure you want to void this sale?</p>
+            <div>
+                <label class="text-[11px] text-gray-600">Reason / Note for Voiding</label>
+                <input type="text" id="void-note" placeholder="e.g. Customer returned items" class="w-full border rounded px-3 py-1.5 text-xs mt-0.5">
+            </div>
+            <div class="flex items-center gap-2 pt-1">
+                <input type="checkbox" id="void-restock" checked class="rounded text-emerald-600">
+                <label class="text-xs text-gray-700">Replenish stock back to inventory</label>
+            </div>
+            <div class="flex gap-2 pt-2">
+                <button onclick="closeVoidModal()" class="flex-1 bg-gray-200 py-2 rounded text-xs">Cancel</button>
+                <button onclick="confirmVoidSale()" class="flex-1 bg-red-600 text-white py-2 rounded text-xs font-bold">Confirm Void</button>
             </div>
         </div>
     </div>
@@ -441,10 +477,12 @@
         let mediaStream = null;
 
         function init() {
-            const saved = localStorage.getItem('earth_circle_pos_pro');
+            // Check both old and new storage keys to ensure seamless data recovery
+            const saved = localStorage.getItem('earth_circle_pos_master') || localStorage.getItem('earth_circle_pos_pro');
             if (saved) {
                 try { db = JSON.parse(saved); } catch(e){}
             }
+            saveDB(); // Ensure master key is populated
             loadSettingsToUI();
             renderProducts();
             renderInventory();
@@ -454,7 +492,7 @@
         }
 
         function saveDB() {
-            localStorage.setItem('earth_circle_pos_pro', JSON.stringify(db));
+            localStorage.setItem('earth_circle_pos_master', JSON.stringify(db));
         }
 
         function switchTab(tabId) {
@@ -488,7 +526,7 @@
             select.innerHTML = '<option value="1">Walk-in Customer</option>';
             db.customers.forEach(c => {
                 if(c.id !== 1) {
-                    select.innerHTML += `<option value="${c.id}">${c.name} ${c.creditDue > 0 ? '(Due: $'+c.creditDue.toFixed(2)+')':''}</option>`;
+                    select.innerHTML += `<option value="${c.id}">${c.name} (${c.phone || '-'}) ${c.creditDue > 0 ? '[Due: $'+c.creditDue.toFixed(2)+']':''}</option>`;
                 }
             });
             select.value = "1";
@@ -518,7 +556,7 @@
             filtered.forEach(p => {
                 const isLow = p.stock <= (p.lowStock || 5);
                 grid.innerHTML += `
-                    <div onclick="addToCart(${p.id})" class="bg-white p-2.5 rounded-lg shadow-sm border ${isLow ? 'border-red-300 bg-red-50/30' : 'border-emerald-100'} hover:border-emerald-500 cursor-pointer flex flex-col justify-between active:bg-emerald-50">
+                    <div onclick="selectProductAndClearSearch(${p.id})" class="bg-white p-2.5 rounded-lg shadow-sm border ${isLow ? 'border-red-300 bg-red-50/30' : 'border-emerald-100'} hover:border-emerald-500 cursor-pointer flex flex-col justify-between active:bg-emerald-50">
                         <div>
                             <h4 class="font-semibold text-xs text-gray-800 line-clamp-2">${p.name}</h4>
                             <p class="text-[10px] text-gray-400 mt-0.5">${p.category}</p>
@@ -531,6 +569,12 @@
                 `;
             });
             renderCustomerDropdown();
+        }
+
+        function selectProductAndClearSearch(id) {
+            addToCart(id);
+            document.getElementById('search-product').value = '';
+            renderProducts();
         }
 
         function filterProducts() { renderProducts(); }
@@ -576,6 +620,7 @@
                         <div class="flex items-center gap-1.5">
                             <button onclick="adjustQty(${index}, 1)" class="w-5 h-5 bg-gray-200 rounded font-bold text-xs">+</button>
                             <button onclick="adjustQty(${index}, -1)" class="w-5 h-5 bg-gray-200 rounded font-bold text-xs">-</button>
+                            <button onclick="removeFromCart(${index})" class="w-5 h-5 bg-red-100 text-red-700 rounded font-bold text-xs ml-1" title="Remove">✕</button>
                         </div>
                     </div>
                 `;
@@ -594,6 +639,11 @@
             document.getElementById('cart-tax').innerText = tax.toFixed(2);
             document.getElementById('cart-total').innerText = total.toFixed(2);
             calculateChange();
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            renderCart();
         }
 
         function calculateChange() {
@@ -679,7 +729,9 @@
                 items: [...cart],
                 subtotal, discount, tax, total, tendered,
                 customer: customer.name,
+                customerId: customer.id,
                 isTab,
+                isVoided: false,
                 currency: db.settings.currency
             };
 
@@ -687,13 +739,48 @@
             saveDB();
             printReceipt(sale);
             
-            // Clear checkout session & reset search + customer
+            // Clear checkout session & reset search + customer default
             clearCart();
             document.getElementById('search-product').value = '';
             renderCustomerDropdown();
             renderProducts();
             renderCustomers();
             alert(isTab ? 'Sale put on customer credit tab!' : 'Sale completed successfully!');
+        }
+
+        // --- CUSTOMER SEARCH MODAL ---
+        function openCustomerSearchModal() {
+            document.getElementById('cust-search-input').value = '';
+            filterCustomerSearch();
+            document.getElementById('customer-search-modal').classList.remove('hidden');
+        }
+        function closeCustomerSearchModal() { document.getElementById('customer-search-modal').classList.add('hidden'); }
+
+        function filterCustomerSearch() {
+            const query = document.getElementById('cust-search-input').value.toLowerCase();
+            const resultsDiv = document.getElementById('cust-search-results');
+            resultsDiv.innerHTML = '';
+            const filtered = db.customers.filter(c => c.name.toLowerCase().includes(query) || (c.phone && c.phone.toLowerCase().includes(query)));
+            if(filtered.length === 0) {
+                resultsDiv.innerHTML = `<p class="text-gray-400 text-center py-2">No customers found.</p>`;
+                return;
+            }
+            filtered.forEach(c => {
+                resultsDiv.innerHTML += `
+                    <div onclick="selectCustomerFromSearch(${c.id})" class="p-2 hover:bg-emerald-50 cursor-pointer flex justify-between items-center">
+                        <div>
+                            <p class="font-semibold text-gray-800">${c.name}</p>
+                            <p class="text-[10px] text-gray-500">Phone: ${c.phone || '-'}</p>
+                        </div>
+                        <span class="text-emerald-700 font-bold">Select</span>
+                    </div>
+                `;
+            });
+        }
+
+        function selectCustomerFromSearch(id) {
+            document.getElementById('pos-customer-select').value = id;
+            closeCustomerSearchModal();
         }
 
         // --- NATIVE CAMERA BARCODE SCANNER ---
@@ -968,6 +1055,7 @@
                 items: [{ name: 'Debt Repayment', price: amount, qty: 1 }],
                 subtotal: amount, discount: 0, tax: 0, total: amount, tendered: amount,
                 customer: c.name,
+                isVoided: false,
                 currency: db.settings.currency
             });
 
@@ -1018,9 +1106,52 @@
             });
         }
 
+        // --- VOID TRANSACTIONS ---
+        function openVoidModal(saleId) {
+            const sale = db.sales.find(s => s.id == saleId);
+            if(!sale || sale.isVoided) return;
+            document.getElementById('void-sale-id').value = sale.id;
+            document.getElementById('void-sale-info').innerText = `Void Sale #${sale.id.toString().slice(-6)} - Total: $${sale.total.toFixed(2)} (${sale.customer})`;
+            document.getElementById('void-note').value = '';
+            document.getElementById('void-restock').checked = true;
+            document.getElementById('void-modal').classList.remove('hidden');
+        }
+
+        function closeVoidModal() { document.getElementById('void-modal').classList.add('hidden'); }
+
+        function confirmVoidSale() {
+            const saleId = document.getElementById('void-sale-id').value;
+            const note = document.getElementById('void-note').value;
+            const restock = document.getElementById('void-restock').checked;
+            const sale = db.sales.find(s => s.id == saleId);
+
+            if(sale && !sale.isVoided) {
+                sale.isVoided = true;
+                sale.voidNote = note ? `Voided: ${note}` : 'Voided transaction';
+
+                // Restock items if selected
+                if(restock && sale.items) {
+                    sale.items.forEach(item => {
+                        const p = db.products.find(prod => prod.id === item.id);
+                        if(p) {
+                            p.stock += item.qty;
+                        }
+                    });
+                }
+
+                saveDB();
+                closeVoidModal();
+                renderAudit();
+                renderInventory();
+                renderProducts();
+                alert('Transaction voided successfully!');
+            }
+        }
+
         // --- AUDIT & TOP/FREQUENT CUSTOMERS ---
         function renderAudit() {
-            const totalRev = db.sales.reduce((sum, s) => sum + s.total, 0);
+            const activeSales = db.sales.filter(s => !s.isVoided);
+            const totalRev = activeSales.reduce((sum, s) => sum + s.total, 0);
             const totalExp = db.expenses.reduce((sum, e) => sum + e.amount, 0);
             const netProfit = totalRev - totalExp;
 
@@ -1052,14 +1183,17 @@
                 return;
             }
             list.innerHTML = '';
-            db.sales.slice(0, 10).forEach(s => {
+            db.sales.slice(0, 15).forEach(s => {
                 list.innerHTML += `
-                    <div class="bg-gray-50 p-2 rounded flex justify-between items-center border text-xs">
+                    <div class="bg-gray-50 p-2 rounded flex justify-between items-center border text-xs ${s.isVoided ? 'opacity-50 bg-red-50' : ''}">
                         <div>
-                            <p class="font-semibold text-gray-800">Sale #${s.id.toString().slice(-6)} (${s.date})</p>
-                            <p class="text-[10px] text-gray-500">${s.customer} • ${s.items.length} items</p>
+                            <p class="font-semibold text-gray-800">Sale #${s.id.toString().slice(-6)} (${s.date}) ${s.isVoided ? '<span class="text-red-600 font-bold">[VOIDED]</span>' : ''}</p>
+                            <p class="text-[10px] text-gray-500">${s.customer} • ${s.items.length} items ${s.isVoided ? '• ' + s.voidNote : ''}</p>
                         </div>
-                        <span class="font-bold text-emerald-700">${s.currency} ${s.total.toFixed(2)}</span>
+                        <div class="flex items-center gap-2">
+                            <span class="font-bold text-emerald-700">${s.currency} ${s.total.toFixed(2)}</span>
+                            {!s.isVoided ? `<button onclick="openVoidModal(${s.id})" class="bg-red-100 text-red-700 px-2 py-0.5 rounded text-[10px] font-bold">Void</button>` : ''}
+                        </div>
                     </div>
                 `;
             });
@@ -1105,4 +1239,64 @@
                     acceptAllDevices: true,
                     optionalServices: ['000018f0-0000-1000-8000-00805f9b34fb', '49535343-fe7d-4ae5-8fa9-9fafd205e455', 'e7810a71-73ae-499d-8c15-faa9aef0c3f2']
                 });
+                const server = await bluetoothDevice.gatt.connect();
+                const services = await server.getPrimaryServices();
+                for(let service of services) {
+                    const characteristics = await service.getCharacteristics();
+                    for(let char of characteristics) {
+                        if(char.properties.write || char.properties.writeWithoutResponse) {
+                            bluetoothCharacteristic = char;
+                            document.getElementById('printer-status').innerText = `Status: Connected to ${bluetoothDevice.name || 'Printer'}`;
+                            document.getElementById('printer-status').className = 'text-xs text-emerald-600 font-semibold text-center';
+                            return;
+                        }
+                    }
+                }
+                alert('Connected to device, but no printable service found.');
+            } catch(error) {
+                console.log(error);
+                alert('Printer connection failed or cancelled.');
+            }
+        }
+
+        async function printReceipt(sale) {
+            if(!bluetoothCharacteristic) return;
+            try {
+                let encoder = new TextEncoder();
+                let commands = '\x1B\x40';
+                commands += '\x1B\x61\x01';
+                commands += 'EARTH CIRCLE\n';
+                commands += '-----------------';
+                commands += `\nReceipt: #${sale.id.toString().slice(-6)}`;
+                commands += `\nCustomer: ${sale.customer}`;
+                commands += `\nDate: ${sale.date}\n\n`;
+                commands += '\x1B\x61\x00';
                 
+                sale.items.forEach(i => {
+                    commands += `${i.name.substring(0, 20)}\n`;
+                    commands += `  ${i.qty} x ${i.price.toFixed(2)} = ${(i.qty * i.price).toFixed(2)}\n`;
+                });
+                
+                commands += '-----------------\n';
+                commands += `Subtotal: ${sale.subtotal.toFixed(2)}\n`;
+                if(sale.discount > 0) commands += `Discount: -${sale.discount.toFixed(2)}\n`;
+                commands += `Tax: ${sale.tax.toFixed(2)}\n`;
+                commands += `TOTAL: ${sale.currency} ${sale.total.toFixed(2)}\n`;
+                commands += `Tendered: ${sale.currency} ${(sale.tendered || sale.total).toFixed(2)}\n`;
+                if(sale.tendered > sale.total) {
+                    commands += `Change: ${sale.currency} ${(sale.tendered - sale.total).toFixed(2)}\n`;
+                }
+                commands += '-----------------\n';
+                commands += '\x1B\x61\x01';
+                commands += 'Thank you for shopping\nat Earth Circle!\n\n\n';
+
+                await bluetoothCharacteristic.writeValue(encoder.encode(commands));
+            } catch(err) {
+                console.error('Print error:', err);
+            }
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
